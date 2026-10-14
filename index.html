@@ -1,0 +1,2335 @@
+<!DOCTYPE html>
+<html lang="it" class="dark">
+<head>
+<meta name="theme-color" content="#0b0b10">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ChronoPlay">
+<link rel="manifest" href="manifest.webmanifest">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChronoPlay Studio — Radar Uscite Videogiochi & Collezione</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Space Grotesk, Plus Jakarta Sans, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Space Grotesk', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        studio: {
+                            950: '#07090e',
+                            900: '#0d111a',
+                            850: '#131926',
+                            800: '#1a2234',
+                            700: '#26324b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #07090e;
+            color: #f1f5f9;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d111a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #26324b;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+        .glass-panel {
+            background: rgba(19, 25, 38, 0.85);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .card-glow {
+            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card-glow:hover {
+            transform: translateY(-2px);
+            border-color: rgba(245, 158, 11, 0.35);
+            box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.65), 0 0 20px -5px rgba(245, 158, 11, 0.12);
+        }
+        .badge-pc { background: rgba(148, 163, 184, 0.15); color: #e2e8f0; border: 1px solid rgba(148, 163, 184, 0.35); }
+        .badge-deck { background: rgba(139, 92, 246, 0.16); color: #ddd6fe; border: 1px solid rgba(139, 92, 246, 0.4); }
+        .badge-ps5 { background: rgba(37, 99, 235, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.45); }
+        .badge-xbox { background: rgba(16, 185, 129, 0.18); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.42); }
+        .badge-switch { background: rgba(244, 63, 94, 0.16); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.4); }
+        .badge-switch2 { background: linear-gradient(135deg, rgba(225, 29, 72, 0.25), rgba(245, 158, 11, 0.25)); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.5); }
+
+        .btn-status-interested.active {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border-color: #f59e0b;
+            box-shadow: 0 0 14px rgba(245, 158, 11, 0.25);
+        }
+        .btn-status-owned.active {
+            background: rgba(6, 182, 212, 0.2);
+            color: #22d3ee;
+            border-color: #06b6d4;
+            box-shadow: 0 0 14px rgba(6, 182, 212, 0.25);
+        }
+        .btn-status-played.active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border-color: #10b981;
+            box-shadow: 0 0 14px rgba(16, 185, 129, 0.25);
+        }
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.65; }
+        }
+        .animate-pulse-subtle {
+            animation: pulse-subtle 2.2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- TOP EDITORIAL HEADER -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800/80">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-3.5">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                
+                <!-- Brand & Live Date -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 via-amber-600 to-orange-700 flex items-center justify-center shadow-lg shadow-amber-500/20 border border-amber-400/30">
+                            <i class="fa-solid fa-gamepad text-slate-950 text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <h1 class="font-display font-bold text-xl sm:text-2xl tracking-tight text-white">
+                                    CHRONO<span class="text-amber-400">PLAY</span>
+                                </h1>
+                                <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase tracking-wider bg-amber-500/10 text-amber-300 border border-amber-500/25">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
+                                    Critic & Collector Radar
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
+                                <span><i class="fa-regular fa-calendar-check text-amber-400 mr-1"></i>Oggi: <strong class="text-slate-200 font-mono">Mer 14 Ottobre 2026</strong></span>
+                                <span class="text-slate-600">•</span>
+                                <span id="syncStatusBadge" class="inline-flex items-center gap-1 text-emerald-400 font-mono text-[11px]">
+                                    <i class="fa-solid fa-cloud-bolt"></i> Sincronizzazione Attiva
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Quick Add Button -->
+                    <button onclick="openGameModal()" class="lg:hidden px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20">
+                        <i class="fa-solid fa-plus"></i> Gioco
+                    </button>
+                </div>
+
+                <!-- Main Navigation Views (Giorno, Mese, Anno, Collezione) -->
+                <nav class="flex items-center bg-studio-950/90 p-1.5 rounded-2xl border border-slate-800/90 overflow-x-auto">
+                    <button onclick="switchMainView('day')" id="nav-day" class="nav-tab flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 whitespace-nowrap">
+                        <i class="fa-solid fa-bolt text-amber-400"></i>
+                        <span>Vista Giorno</span>
+                        <span id="navBadgeToday" class="px-1.5 py-0.5 text-[10px] font-mono rounded-md bg-amber-500/20 text-amber-300">3</span>
+                    </button>
+                    <button onclick="switchMainView('month')" id="nav-month" class="nav-tab flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 whitespace-nowrap">
+                        <i class="fa-regular fa-calendar-days text-cyan-400"></i>
+                        <span>Vista Mese</span>
+                    </button>
+                    <button onclick="switchMainView('year')" id="nav-year" class="nav-tab flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 whitespace-nowrap">
+                        <i class="fa-solid fa-layer-group text-purple-400"></i>
+                        <span>Vista Anno</span>
+                    </button>
+                    <button onclick="switchMainView('collection')" id="nav-collection" class="nav-tab flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 whitespace-nowrap">
+                        <i class="fa-solid fa-box-archive text-emerald-400"></i>
+                        <span>La Mia Libreria</span>
+                        <span id="navBadgeTracked" class="px-1.5 py-0.5 text-[10px] font-mono rounded-md bg-emerald-500/20 text-emerald-300">0</span>
+                    </button>
+                </nav>
+
+                <!-- Action Toolbar: Live AI Update, + Nuovo Gioco, Export/Import -->
+                <div class="hidden lg:flex items-center gap-2.5">
+                    <button onclick="openAiSyncModal()" class="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600/30 to-cyan-600/30 hover:from-indigo-600/50 hover:to-cyan-600/50 text-cyan-200 border border-cyan-500/40 text-xs font-semibold flex items-center gap-2 transition-all shadow-sm">
+                        <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i>
+                        <span>Live AI Sync</span>
+                    </button>
+                    <button onclick="openGameModal()" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-2 transition-all shadow-lg shadow-amber-500/20">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Nuovo Gioco</span>
+                    </button>
+                    <div class="relative group">
+                        <button class="p-2.5 rounded-xl bg-studio-850 hover:bg-studio-800 text-slate-300 border border-slate-700/70 text-xs flex items-center gap-1.5" title="Backup & Dati">
+                            <i class="fa-solid fa-database text-amber-400"></i>
+                            <span class="hidden xl:inline">Backup</span>
+                            <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-56 rounded-2xl glass-panel border border-slate-700 shadow-2xl py-2 hidden group-hover:block z-50">
+                            <div class="px-3 py-1.5 text-[11px] font-mono uppercase text-slate-400 border-b border-slate-800">Gestione Archivio</div>
+                            <button onclick="exportBackupJSON()" class="w-full px-3.5 py-2 text-left text-xs text-slate-200 hover:bg-slate-800/80 flex items-center gap-2.5">
+                                <i class="fa-solid fa-download text-emerald-400 w-4"></i> Esporta Backup JSON
+                            </button>
+                            <button onclick="exportBackupCSV()" class="w-full px-3.5 py-2 text-left text-xs text-slate-200 hover:bg-slate-800/80 flex items-center gap-2.5">
+                                <i class="fa-solid fa-file-csv text-cyan-400 w-4"></i> Esporta Foglio CSV
+                            </button>
+                            <label class="w-full px-3.5 py-2 text-left text-xs text-slate-200 hover:bg-slate-800/80 flex items-center gap-2.5 cursor-pointer">
+                                <i class="fa-solid fa-upload text-amber-400 w-4"></i> Importa Backup JSON
+                                <input type="file" id="importJsonInput" accept=".json" class="hidden" onchange="importBackupJSON(event)">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+        <!-- KPI METRICS & QUICK TRACKER BAR -->
+        <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <!-- Totale Database -->
+            <div onclick="resetAllFilters()" class="glass-panel rounded-2xl p-3.5 border border-slate-800/90 hover:border-slate-700 cursor-pointer transition-all">
+                <div class="flex items-center justify-between text-xs text-slate-400">
+                    <span>Catalogo Totale</span>
+                    <i class="fa-solid fa-compact-disc text-slate-400"></i>
+                </div>
+                <div class="mt-1.5 flex items-baseline justify-between">
+                    <span id="kpiTotalGames" class="font-display font-bold text-2xl text-white">0</span>
+                    <span class="text-[11px] font-mono text-slate-400">2026-2027</span>
+                </div>
+            </div>
+
+            <!-- Uscite Oggi (14 Ott 2026) -->
+            <div onclick="jumpToToday()" class="glass-panel rounded-2xl p-3.5 border border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10 cursor-pointer transition-all">
+                <div class="flex items-center justify-between text-xs text-amber-300">
+                    <span class="font-medium">Uscite Oggi (14 Ott)</span>
+                    <i class="fa-solid fa-fire-flame-curved text-amber-400"></i>
+                </div>
+                <div class="mt-1.5 flex items-baseline justify-between">
+                    <span id="kpiTodayGames" class="font-display font-bold text-2xl text-amber-400">0</span>
+                    <span class="text-[11px] font-mono text-amber-300/80">Radar Giorno →</span>
+                </div>
+            </div>
+
+            <!-- Uscite Mese Selezionato -->
+            <div onclick="switchMainView('month')" class="glass-panel rounded-2xl p-3.5 border border-slate-800/90 hover:border-cyan-500/40 cursor-pointer transition-all">
+                <div class="flex items-center justify-between text-xs text-slate-400">
+                    <span id="kpiMonthLabel">Uscite Mese</span>
+                    <i class="fa-regular fa-calendar text-cyan-400"></i>
+                </div>
+                <div class="mt-1.5 flex items-baseline justify-between">
+                    <span id="kpiMonthGames" class="font-display font-bold text-2xl text-white">0</span>
+                    <span class="text-[11px] font-mono text-cyan-400">Calendario →</span>
+                </div>
+            </div>
+
+            <!-- Interessato (Wishlist) -->
+            <div onclick="filterByUserStatus('interested')" class="glass-panel rounded-2xl p-3.5 border border-slate-800/90 hover:border-amber-500/50 cursor-pointer transition-all">
+                <div class="flex items-center justify-between text-xs text-amber-300/90">
+                    <span>⭐ Interessato</span>
+                    <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300">Wishlist</span>
+                </div>
+                <div class="mt-1.5 flex items-baseline justify-between">
+                    <span id="kpiInterested" class="font-display font-bold text-2xl text-amber-400">0</span>
+                    <span class="text-[11px] text-slate-400">Filtra →</span>
+                </div>
+            </div>
+
+            <!-- Possiedo (Collezione) -->
+            <div onclick="filterByUserStatus('owned')" class="glass-panel rounded-2xl p-3.5 border border-slate-800/90 hover:border-cyan-500/50 cursor-pointer transition-all">
+                <div class="flex items-center justify-between text-xs text-cyan-300/90">
+                    <span>📦 Possiedo</span>
+                    <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-300">Collezione</span>
+                </div>
+                <div class="mt-1.5 flex items-baseline justify-between">
+                    <span id="kpiOwned" class="font-display font-bold text-2xl text-cyan-400">0</span>
+                    <span class="text-[11px] text-slate-400">Filtra →</span>
+                </div>
+            </div>
+
+            <!-- Giocato (Completati) -->
+            <div onclick="filterByUserStatus('played')" class="glass-panel rounded-2xl p-3.5 border border-slate-800/90 hover:border-emerald-500/50 cursor-pointer transition-all">
+                <div class="flex items-center justify-between text-xs text-emerald-300/90">
+                    <span>🏆 Giocato</span>
+                    <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300">Completati</span>
+                </div>
+                <div class="mt-1.5 flex items-baseline justify-between">
+                    <span id="kpiPlayed" class="font-display font-bold text-2xl text-emerald-400">0</span>
+                    <span class="text-[11px] text-slate-400">Filtra →</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- GLOBAL SEARCH & MULTI-FILTER BAR -->
+        <section class="glass-panel rounded-2xl p-4 border border-slate-800/90 space-y-3.5">
+            <div class="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
+                <!-- Search Input -->
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input
+                        type="text"
+                        id="globalSearchInput"
+                        oninput="handleSearchAndFilter()"
+                        placeholder="Cerca per titolo, sviluppatore (es. Capcom, FromSoftware), publisher (es. Nintendo, SEGA) o genere..."
+                        class="w-full pl-10 pr-9 py-2.5 bg-studio-950/90 border border-slate-700/80 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
+                    >
+                    <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- User Status Filter Pills -->
+                <div class="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0">
+                    <span class="text-xs font-mono text-slate-400 mr-1 whitespace-nowrap"><i class="fa-solid fa-filter mr-1"></i>Stato:</span>
+                    <button onclick="setStatusFilter('all')" id="status-filter-all" class="status-pill px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap">Tutti</button>
+                    <button onclick="setStatusFilter('interested')" id="status-filter-interested" class="status-pill px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap">⭐ Interessato</button>
+                    <button onclick="setStatusFilter('owned')" id="status-filter-owned" class="status-pill px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap">📦 Possiedo</button>
+                    <button onclick="setStatusFilter('played')" id="status-filter-played" class="status-pill px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap">🏆 Giocato</button>
+                    <button onclick="setStatusFilter('untracked')" id="status-filter-untracked" class="status-pill px-3 py-1.5 rounded-xl text-xs font-medium border transition-all whitespace-nowrap">Non spuntati</button>
+                </div>
+            </div>
+
+            <!-- Console Filter Bar + Mobile Action Row -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
+                <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0" id="consoleFilterBar">
+                    <span class="text-xs font-mono text-slate-400 mr-1 whitespace-nowrap"><i class="fa-solid fa-tv mr-1"></i>Console:</span>
+                    <button onclick="setConsoleFilter('ALL')" data-console="ALL" class="console-pill px-3 py-1 rounded-lg text-xs font-medium border transition-all whitespace-nowrap">Tutte</button>
+                    <button onclick="setConsoleFilter('PC')" data-console="PC" class="console-pill px-3 py-1 rounded-lg text-xs font-medium border transition-all whitespace-nowrap">PC</button>
+                    <button onclick="setConsoleFilter('Steam Deck')" data-console="Steam Deck" class="console-pill px-3 py-1 rounded-lg text-xs font-medium border transition-all whitespace-nowrap">Steam Deck</button>
+                    <button onclick="setConsoleFilter('PS5')" data-console="PS5" class="console-pill px-3 py-1 rounded-lg text-xs font-medium border transition-all whitespace-nowrap">PS5</button>
+                    <button onclick="setConsoleFilter('Xbox Series X|S')" data-console="Xbox Series X|S" class="console-pill px-3 py-1 rounded-lg text-xs font-medium border transition-all whitespace-nowrap">Xbox Series X|S</button>
+                    <button onclick="setConsoleFilter('Nintendo Switch')" data-console="Nintendo Switch" class="console-pill px-3 py-1 rounded-lg text-xs font-medium border transition-all whitespace-nowrap">Switch</button>
+                    <button onclick="setConsoleFilter('Nintendo Switch 2')" data-console="Nintendo Switch 2" class="console-pill px-3 py-1 rounded-lg text-xs font-medium border transition-all whitespace-nowrap">Switch 2</button>
+                </div>
+
+                <!-- Mobile Live AI & Backup Buttons -->
+                <div class="flex lg:hidden items-center gap-2 justify-end">
+                    <button onclick="openAiSyncModal()" class="px-3 py-1.5 rounded-lg bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 text-xs font-medium flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Live AI Sync
+                    </button>
+                    <button onclick="exportBackupJSON()" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 text-xs flex items-center gap-1.5">
+                        <i class="fa-solid fa-download"></i> Esporta JSON
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- 1. VISTA GIORNO (RADAR GIORNALIERO & PROSSIMI 7 GIORNI)             -->
+        <!-- =================================================================== -->
+        <section id="view-day" class="space-y-6 hidden">
+            <!-- Day Navigator Header -->
+            <div class="glass-panel rounded-2xl p-4 sm:p-5 border border-slate-800/90 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <button onclick="shiftSelectedDay(-1)" class="w-10 h-10 rounded-xl bg-studio-850 hover:bg-studio-800 border border-slate-700 flex items-center justify-center text-slate-200 transition-all" title="Giorno Precedente">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <div class="text-center sm:text-left">
+                        <div class="flex items-center justify-center sm:justify-start gap-2">
+                            <span class="text-xs font-mono uppercase tracking-wider text-amber-400">Radar Giornaliero</span>
+                            <span id="dayViewRelativeBadge" class="px-2 py-0.5 rounded-full text-[11px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">OGGI</span>
+                        </div>
+                        <h2 id="dayViewFullTitle" class="font-display font-bold text-xl sm:text-2xl text-white mt-0.5">Mercoledì 14 Ottobre 2026</h2>
+                    </div>
+                    <button onclick="shiftSelectedDay(1)" class="w-10 h-10 rounded-xl bg-studio-850 hover:bg-studio-800 border border-slate-700 flex items-center justify-center text-slate-200 transition-all" title="Giorno Successivo">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <button onclick="jumpToToday()" class="px-3.5 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-xs font-semibold transition-all">
+                        <i class="fa-solid fa-location-crosshairs mr-1.5"></i>Torna a Oggi (14 Ott 2026)
+                    </button>
+                    <div class="flex items-center bg-studio-950 border border-slate-700/80 rounded-xl px-3 py-1.5">
+                        <i class="fa-regular fa-calendar text-slate-400 text-xs mr-2"></i>
+                        <input type="date" id="dayPickerInput" value="2026-10-14" onchange="onDatePickerChange(this.value)" class="bg-transparent text-xs font-mono text-white focus:outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selected Day Releases -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-display font-bold text-lg text-white flex items-center gap-2.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                        <span>Giochi in uscita il giorno selezionato</span>
+                        <span id="dayExactCountBadge" class="px-2.5 py-0.5 rounded-full text-xs font-mono bg-slate-800 text-amber-400">0</span>
+                    </h3>
+                    <button onclick="openGameModalWithDate(state.selectedDate)" class="text-xs text-amber-400 hover:text-amber-300 font-medium flex items-center gap-1">
+                        <i class="fa-solid fa-plus-circle"></i> Aggiungi uscita in questa data
+                    </button>
+                </div>
+                <div id="dayExactGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            </div>
+
+            <!-- Next 7 Days Radar -->
+            <div class="space-y-3 pt-4 border-t border-slate-800/80">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-display font-bold text-lg text-white flex items-center gap-2.5">
+                        <i class="fa-solid fa-satellite-dish text-cyan-400"></i>
+                        <span>In arrivo nei prossimi 7 giorni (Finestra Settimanale)</span>
+                        <span id="dayUpcomingCountBadge" class="px-2.5 py-0.5 rounded-full text-xs font-mono bg-cyan-500/15 text-cyan-300">0</span>
+                    </h3>
+                </div>
+                <div id="dayUpcomingGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            </div>
+
+            <!-- Recent 7 Days Releases -->
+            <div class="space-y-3 pt-4 border-t border-slate-800/80">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-display font-bold text-lg text-slate-300 flex items-center gap-2.5">
+                        <i class="fa-solid fa-clock-rotate-left text-emerald-400"></i>
+                        <span>Usciti negli ultimi 7 giorni</span>
+                        <span id="dayRecentCountBadge" class="px-2.5 py-0.5 rounded-full text-xs font-mono bg-emerald-500/15 text-emerald-300">0</span>
+                    </h3>
+                </div>
+                <div id="dayRecentGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            </div>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- 2. VISTA MESE (CALENDARIO INTERATTIVO & ELENCO CRONOLOGICO)         -->
+        <!-- =================================================================== -->
+        <section id="view-month" class="space-y-6">
+            <!-- Month & Year Selector Bar -->
+            <div class="glass-panel rounded-2xl p-4 border border-slate-800/90 space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <!-- Year Switcher + Month Title -->
+                    <div class="flex items-center gap-3">
+                        <div class="inline-flex bg-studio-950 p-1 rounded-xl border border-slate-800">
+                            <button onclick="setYear(2026)" id="year-btn-2026" class="px-3.5 py-1.5 rounded-lg font-mono text-xs font-bold transition-all">2026</button>
+                            <button onclick="setYear(2027)" id="year-btn-2027" class="px-3.5 py-1.5 rounded-lg font-mono text-xs font-bold transition-all">2027</button>
+                        </div>
+                        <div>
+                            <h2 id="monthViewTitle" class="font-display font-bold text-xl sm:text-2xl text-white">Ottobre 2026</h2>
+                            <p id="monthViewSubtitle" class="text-xs text-slate-400">Esplora il calendario mensile e le schede complete</p>
+                        </div>
+                    </div>
+
+                    <!-- Sub-mode toggle: Entrambi / Solo Calendario / Solo Schede + Filtro Giorno -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div id="monthDayFilterBanner" class="hidden items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs">
+                            <span id="monthDayFilterText">Giorno filtrato</span>
+                            <button onclick="clearMonthDayFilter()" class="hover:text-white font-bold ml-1"><i class="fa-solid fa-xmark"></i> Mostra tutto il mese</button>
+                        </div>
+
+                        <div class="inline-flex bg-studio-950 p-1 rounded-xl border border-slate-800 text-xs">
+                            <button onclick="setMonthDisplayMode('split')" id="month-mode-split" class="px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-table-columns"></i> Calendario + Card
+                            </button>
+                            <button onclick="setMonthDisplayMode('calendar')" id="month-mode-calendar" class="px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5">
+                                <i class="fa-regular fa-calendar-days"></i> Griglia Calendario
+                            </button>
+                            <button onclick="setMonthDisplayMode('cards')" id="month-mode-cards" class="px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-grip"></i> Elenco Card
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 12 Months Pills Bar -->
+                <div class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-12 gap-1.5" id="monthPillsContainer"></div>
+            </div>
+
+            <!-- Interactive 7-Column Calendar Grid -->
+            <div id="monthCalendarWrapper" class="glass-panel rounded-2xl p-4 border border-slate-800/90 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-display font-semibold text-sm text-slate-300 flex items-center gap-2">
+                        <i class="fa-regular fa-calendar-check text-amber-400"></i>
+                        <span>Calendario Mensile delle Uscite</span>
+                        <span class="text-xs text-slate-500 font-normal hidden sm:inline">(Clicca su una casella per filtrare quel giorno o vedere i giochi)</span>
+                    </h3>
+                    <div class="flex items-center gap-3 text-[11px] text-slate-400">
+                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-400"></span> Oggi / Interessato</span>
+                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-cyan-400"></span> Possiedo</span>
+                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Giocato</span>
+                    </div>
+                </div>
+
+                <!-- Weekday Headers (Lun - Dom) -->
+                <div class="grid grid-cols-7 gap-1.5 text-center font-mono text-[11px] uppercase tracking-wider text-slate-400 pb-1">
+                    <div class="py-1">Lun</div>
+                    <div class="py-1">Mar</div>
+                    <div class="py-1">Mer</div>
+                    <div class="py-1">Gio</div>
+                    <div class="py-1">Ven</div>
+                    <div class="py-1 text-amber-400/80">Sab</div>
+                    <div class="py-1 text-amber-400/80">Dom</div>
+                </div>
+
+                <!-- Calendar Cells -->
+                <div id="calendarGridCells" class="grid grid-cols-7 gap-1.5 sm:gap-2"></div>
+            </div>
+
+            <!-- Detailed Month Cards List -->
+            <div id="monthCardsWrapper" class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-display font-bold text-lg text-white flex items-center gap-2.5">
+                        <i class="fa-solid fa-list-check text-amber-400"></i>
+                        <span id="monthCardsHeaderTitle">Schede Videogiochi del Mese</span>
+                        <span id="monthCardsCountBadge" class="px-2.5 py-0.5 rounded-full text-xs font-mono bg-slate-800 text-amber-400">0</span>
+                    </h3>
+                </div>
+                <div id="monthCardsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            </div>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- 3. VISTA ANNO (ROADMAP ANNUALE 12 MESI & STATISTICHE PIATTAFORME)   -->
+        <!-- =================================================================== -->
+        <section id="view-year" class="space-y-6 hidden">
+            <div class="glass-panel rounded-2xl p-5 border border-slate-800/90 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-wider text-purple-400">Panoramica Annuale & Roadmap</span>
+                    <h2 id="yearViewTitle" class="font-display font-bold text-2xl text-white mt-0.5">Roadmap Videoludica 2026</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Densità delle uscite mese per mese, distribuzione console e titoli chiave tracciati</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="setYear(2026)" id="year-roadmap-2026" class="px-4 py-2 rounded-xl font-mono text-xs font-bold border transition-all">Anno 2026</button>
+                    <button onclick="setYear(2027)" id="year-roadmap-2027" class="px-4 py-2 rounded-xl font-mono text-xs font-bold border transition-all">Anno 2027</button>
+                </div>
+            </div>
+
+            <!-- Yearly Console Breakdown Bar -->
+            <div id="yearConsoleBreakdown" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"></div>
+
+            <!-- 12 Months Roadmap Grid -->
+            <div id="yearMonthsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- 4. LA MIA LIBRERIA & TRACKER (INTERESSATO / POSSIEDO / GIOCATO)     -->
+        <!-- =================================================================== -->
+        <section id="view-collection" class="space-y-6 hidden">
+            <div class="glass-panel rounded-2xl p-5 border border-slate-800/90 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-wider text-emerald-400">Archivio Personale & Diario del Critico</span>
+                    <h2 class="font-display font-bold text-2xl text-white mt-0.5">La Mia Libreria & Tracker</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Gestisci tutti i giochi che hai spuntato come Interessato, Possiedo o Giocato, con voti e note personali</p>
+                </div>
+
+                <!-- Sub-tabs for Collection -->
+                <div class="flex flex-wrap items-center gap-2 bg-studio-950 p-1.5 rounded-xl border border-slate-800">
+                    <button onclick="setCollectionTab('all')" id="col-tab-all" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition-all">Tutti i Tracciati</button>
+                    <button onclick="setCollectionTab('interested')" id="col-tab-interested" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition-all">⭐ Interessato</button>
+                    <button onclick="setCollectionTab('owned')" id="col-tab-owned" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition-all">📦 Possiedo</button>
+                    <button onclick="setCollectionTab('played')" id="col-tab-played" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition-all">🏆 Giocato</button>
+                </div>
+            </div>
+
+            <div id="collectionCardsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+        </section>
+
+    </main>
+
+    <!-- ======================================================================= -->
+    <!-- MODALE 1: AGGIUNGI / MODIFICA VIDEOGIOCO                                -->
+    <!-- ======================================================================= -->
+    <div id="gameModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="glass-panel w-full max-w-2xl rounded-2xl border border-slate-700 shadow-2xl overflow-hidden my-8">
+            <div class="px-6 py-4 bg-studio-900 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid fa-gamepad text-amber-400 text-lg"></i>
+                    <h3 id="gameModalTitle" class="font-display font-bold text-lg text-white">Aggiungi Nuovo Videogioco</h3>
+                </div>
+                <button onclick="closeGameModal()" class="text-slate-400 hover:text-white w-8 h-8 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="gameForm" onsubmit="saveGameFromModal(event)" class="p-6 space-y-4">
+                <input type="hidden" id="formGameId">
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-mono uppercase text-slate-300 mb-1.5">Titolo del Videogioco *</label>
+                        <input type="text" id="formTitle" required placeholder="Es. Grand Theft Auto VI" class="w-full px-3.5 py-2.5 rounded-xl bg-studio-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono uppercase text-slate-300 mb-1.5">Data di Uscita *</label>
+                        <input type="date" id="formDate" required class="w-full px-3.5 py-2.5 rounded-xl bg-studio-950 border border-slate-700 text-sm font-mono text-white focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-mono uppercase text-slate-300 mb-1.5"><i class="fa-solid fa-code text-amber-400 mr-1"></i>Sviluppatore (Developer) *</label>
+                        <input type="text" id="formDeveloper" required placeholder="Es. Capcom, FromSoftware..." class="w-full px-3.5 py-2.5 rounded-xl bg-studio-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono uppercase text-slate-300 mb-1.5"><i class="fa-solid fa-building text-cyan-400 mr-1"></i>Editore (Publisher) *</label>
+                        <input type="text" id="formPublisher" required placeholder="Es. Nintendo, SEGA, Sony..." class="w-full px-3.5 py-2.5 rounded-xl bg-studio-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono uppercase text-slate-300 mb-2">Console / Piattaforme (Seleziona una o più) *</label>
+                    <div class="flex flex-wrap gap-2" id="formConsolesContainer">
+                        <button type="button" onclick="toggleFormConsole('PC')" data-plat="PC" class="form-console-btn px-3 py-1.5 rounded-xl text-xs font-medium border border-slate-700 bg-studio-950 text-slate-300">PC</button>
+                        <button type="button" onclick="toggleFormConsole('Steam Deck')" data-plat="Steam Deck" class="form-console-btn px-3 py-1.5 rounded-xl text-xs font-medium border border-slate-700 bg-studio-950 text-slate-300">Steam Deck</button>
+                        <button type="button" onclick="toggleFormConsole('PS5')" data-plat="PS5" class="form-console-btn px-3 py-1.5 rounded-xl text-xs font-medium border border-slate-700 bg-studio-950 text-slate-300">PS5</button>
+                        <button type="button" onclick="toggleFormConsole('Xbox Series X|S')" data-plat="Xbox Series X|S" class="form-console-btn px-3 py-1.5 rounded-xl text-xs font-medium border border-slate-700 bg-studio-950 text-slate-300">Xbox Series X|S</button>
+                        <button type="button" onclick="toggleFormConsole('Nintendo Switch')" data-plat="Nintendo Switch" class="form-console-btn px-3 py-1.5 rounded-xl text-xs font-medium border border-slate-700 bg-studio-950 text-slate-300">Nintendo Switch</button>
+                        <button type="button" onclick="toggleFormConsole('Nintendo Switch 2')" data-plat="Nintendo Switch 2" class="form-console-btn px-3 py-1.5 rounded-xl text-xs font-medium border border-slate-700 bg-studio-950 text-slate-300">Nintendo Switch 2</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-mono uppercase text-slate-300 mb-1.5">Genere / Categoria</label>
+                        <input type="text" id="formGenre" placeholder="Es. Action RPG, Survival Horror..." class="w-full px-3.5 py-2.5 rounded-xl bg-studio-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono uppercase text-slate-300 mb-1.5">Stato Personale Rapido</label>
+                        <div class="flex items-center gap-2 pt-1">
+                            <label class="flex items-center gap-1.5 text-xs text-amber-300 cursor-pointer bg-studio-950 px-3 py-2 rounded-xl border border-slate-800">
+                                <input type="checkbox" id="formInterested" class="accent-amber-500"> ⭐ Interessato
+                            </label>
+                            <label class="flex items-center gap-1.5 text-xs text-cyan-300 cursor-pointer bg-studio-950 px-3 py-2 rounded-xl border border-slate-800">
+                                <input type="checkbox" id="formOwned" class="accent-cyan-500"> 📦 Possiedo
+                            </label>
+                            <label class="flex items-center gap-1.5 text-xs text-emerald-300 cursor-pointer bg-studio-950 px-3 py-2 rounded-xl border border-slate-800">
+                                <input type="checkbox" id="formPlayed" class="accent-emerald-500"> 🏆 Giocato
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+                    <button type="button" id="deleteGameBtn" onclick="deleteCurrentGame()" class="hidden px-3.5 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/30 text-xs font-semibold">
+                        <i class="fa-solid fa-trash-can mr-1"></i> Elimina Gioco
+                    </button>
+                    <div class="flex items-center gap-2.5 ml-auto">
+                        <button type="button" onclick="closeGameModal()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">Annulla</button>
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20">
+                            <i class="fa-solid fa-floppy-disk mr-1.5"></i>Salva nel Database
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ======================================================================= -->
+    <!-- MODALE 2: DIARIO DEL CRITICO (VOTO PERSONALE, PIATTAFORMA E NOTE)       -->
+    <!-- ======================================================================= -->
+    <div id="criticModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-lg rounded-2xl border border-slate-700 shadow-2xl overflow-hidden">
+            <div class="px-6 py-4 bg-studio-900 border-b border-slate-800 flex items-center justify-between">
+                <div>
+                    <span class="text-[11px] font-mono uppercase text-amber-400">Scheda Valutazione & Collezione</span>
+                    <h3 id="criticModalGameTitle" class="font-display font-bold text-lg text-white">Titolo Gioco</h3>
+                </div>
+                <button onclick="closeCriticModal()" class="text-slate-400 hover:text-white w-8 h-8 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form onsubmit="saveCriticNotes(event)" class="p-6 space-y-4">
+                <input type="hidden" id="criticGameId">
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-mono uppercase text-slate-300 mb-1.5">Il Tuo Voto (1 - 10)</label>
+                        <input type="number" id="criticRating" min="1" max="10" step="0.5" placeholder="Es. 9.0" class="w-full px-3.5 py-2.5 rounded-xl bg-studio-950 border border-slate-700 text-sm font-mono text-amber-400 focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono uppercase text-slate-300 mb-1.5">Piattaforma Scelta</label>
+                        <select id="criticPlatform" class="w-full px-3.5 py-2.5 rounded-xl bg-studio-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-amber-500">
+                            <option value="">Non specificata</option>
+                            <option value="PC">PC</option>
+                            <option value="Steam Deck">Steam Deck</option>
+                            <option value="PS5">PS5</option>
+                            <option value="Xbox Series X|S">Xbox Series X|S</option>
+                            <option value="Nintendo Switch">Nintendo Switch</option>
+                            <option value="Nintendo Switch 2">Nintendo Switch 2</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono uppercase text-slate-300 mb-1.5">Note di Recensione / Impressioni / Stato Completamento</label>
+                    <textarea id="criticNotesText" rows="4" placeholder="Annota qui le tue impressioni, ore di gioco, edizione fisica/digitale o appunti per la recensione..." class="w-full px-3.5 py-2.5 rounded-xl bg-studio-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-2.5 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="closeCriticModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold">Chiudi</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs">
+                        <i class="fa-solid fa-check mr-1"></i>Salva Valutazione
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ======================================================================= -->
+    <!-- MODALE 3: LIVE AI SYNC (GEMINI API CON GOOGLE SEARCH GROUNDING)         -->
+    <!-- ======================================================================= -->
+    <div id="aiSyncModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="glass-panel w-full max-w-3xl rounded-2xl border border-cyan-500/40 shadow-2xl overflow-hidden my-8">
+            <div class="px-6 py-4 bg-gradient-to-r from-studio-900 via-indigo-950/60 to-studio-900 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-300">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-display font-bold text-lg text-white">Sincronizza & Scopri Nuove Uscite (Live AI)</h3>
+                        <p class="text-xs text-cyan-300/80">Ricerca intelligente con Google Search Grounding per trovare nuove date, console, sviluppatori e publisher</p>
+                    </div>
+                </div>
+                <button onclick="closeAiSyncModal()" class="text-slate-400 hover:text-white w-8 h-8 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <!-- Quick Preset Queries -->
+                <div class="flex flex-wrap gap-2">
+                    <span class="text-xs font-mono text-slate-400 py-1">Ricerche rapide:</span>
+                    <button onclick="setAiPrompt('Nuove uscite videogiochi annunciate per Novembre e Dicembre 2026 con date, console, sviluppatore e publisher')" class="px-2.5 py-1 rounded-lg bg-studio-950 hover:bg-slate-800 border border-slate-700 text-xs text-cyan-300">Uscite Fine 2026</button>
+                    <button onclick="setAiPrompt('Videogiochi più attesi in uscita nel 2027 con data, console, sviluppatore e publisher')" class="px-2.5 py-1 rounded-lg bg-studio-950 hover:bg-slate-800 border border-slate-700 text-xs text-cyan-300">Calendario 2027</button>
+                    <button onclick="setAiPrompt('Nuove uscite esclusive e multipiattaforma per Nintendo Switch 2 tra 2026 e 2027')" class="px-2.5 py-1 rounded-lg bg-studio-950 hover:bg-slate-800 border border-slate-700 text-xs text-amber-300">Speciale Switch 2</button>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-2.5">
+                    <input
+                        type="text"
+                        id="aiQueryInput"
+                        placeholder="Scrivi il nome di un gioco o chiedi le uscite di un mese/anno (es. 'Uscite Marzo 2027' o 'Death Stranding 2 PC')..."
+                        class="flex-1 px-4 py-2.5 rounded-xl bg-studio-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400"
+                    >
+                    <button onclick="runGeminiLiveDiscovery()" id="aiRunBtn" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 whitespace-nowrap shadow-lg shadow-cyan-500/20">
+                        <i class="fa-solid fa-satellite-dish"></i> Cerca & Genera Schede
+                    </button>
+                </div>
+
+                <!-- AI Loading & Results Area -->
+                <div id="aiLoadingBox" class="hidden py-8 text-center space-y-2">
+                    <i class="fa-solid fa-circle-notch fa-spin text-2xl text-cyan-400"></i>
+                    <p class="text-xs font-mono text-cyan-300">Scansione calendari editoriali e verifica Developer / Publisher / Console in corso...</p>
+                </div>
+
+                <div id="aiResultsContainer" class="space-y-3 max-h-[380px] overflow-y-auto pr-1"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800/80 py-5 mt-12 text-center text-xs text-slate-500">
+        <div class="max-w-[1600px] mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div>
+                <strong class="text-slate-300 font-display">CHRONOPLAY STUDIO</strong> — Dashboard Videogiochi Giorno / Mese / Anno
+            </div>
+            <div class="flex items-center gap-4 font-mono text-[11px]">
+                <span>⭐ Interessato</span>
+                <span>📦 Possiedo</span>
+                <span>🏆 Giocato</span>
+                <span id="footerUserId" class="text-slate-600"></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ======================================================================= -->
+    <!-- LOGICA APPLICATIVA & INTEGRAZIONE CLOUD FIRESTORE                       -->
+    <!-- ======================================================================= -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Data odierna di riferimento: Mercoledì 14 Ottobre 2026
+        const TODAY_ISO = "2026-10-14";
+
+        const ITALIAN_MONTHS = [
+            "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+            "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
+        ];
+        const ITALIAN_MONTHS_SHORT = [
+            "Gen", "Feb", "Mar", "Apr", "Mag", "Giu",
+            "Lug", "Ago", "Set", "Ott", "Nov", "Dic"
+        ];
+        const ITALIAN_DAYS_FULL = [
+            "Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"
+        ];
+
+        // DATABASE REALE PRECARICATO (2026 - 2027)
+        const INITIAL_GAMES_DB = [
+            { id: "g-001", date: "2026-01-15", title: "The Legend of Heroes: Trails Beyond the Horizon", developer: "Nihon Falcom", publisher: "NIS America", consoles: ["PC", "Steam Deck", "PS5", "Nintendo Switch", "Nintendo Switch 2"], genre: "JRPG" },
+            { id: "g-002", date: "2026-01-15", title: "Animal Crossing: New Horizons – Switch 2 Edition", developer: "Nintendo EPD", publisher: "Nintendo", consoles: ["Nintendo Switch 2"], genre: "Life Sim" },
+            { id: "g-003", date: "2026-01-20", title: "MIO: Memories in Orbit", developer: "Douze Dixièmes", publisher: "Focus Entertainment", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S", "Nintendo Switch"], genre: "Metroidvania" },
+            { id: "g-004", date: "2026-01-22", title: "Final Fantasy VII Remake Intergrade", developer: "Square Enix", publisher: "Square Enix", consoles: ["Nintendo Switch 2"], genre: "Action RPG" },
+            { id: "g-005", date: "2026-02-05", title: "Dragon Quest VII Reimagined", developer: "Square Enix / HexaDrive", publisher: "Square Enix", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch", "Nintendo Switch 2"], genre: "JRPG" },
+            { id: "g-006", date: "2026-02-06", title: "Nioh 3", developer: "Team Ninja", publisher: "Koei Tecmo", consoles: ["PS5", "PC"], genre: "Action RPG / Soulslike" },
+            { id: "g-007", date: "2026-02-10", title: "Mewgenics", developer: "Edmund McMillen & Tyler Glaiel", publisher: "Edmund McMillen", consoles: ["PC", "Steam Deck"], genre: "Tactical Roguelike" },
+            { id: "g-008", date: "2026-02-11", title: "Romeo is a Dead Man", developer: "Grasshopper Manufacture", publisher: "Grasshopper Manufacture", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Action Adventure" },
+            { id: "g-009", date: "2026-02-12", title: "Mario Tennis Fever", developer: "Camelot Software Planning", publisher: "Nintendo", consoles: ["Nintendo Switch 2"], genre: "Sport / Arcade" },
+            { id: "g-010", date: "2026-02-12", title: "Yakuza Kiwami 3 & Dark Ties", developer: "Ryu Ga Gotoku Studio", publisher: "SEGA", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "Action RPG" },
+            { id: "g-011", date: "2026-02-26", title: "Towerborne", developer: "Stoic", publisher: "Xbox Game Studios", consoles: ["PC", "Steam Deck", "Xbox Series X|S", "PS5"], genre: "Action Co-op RPG" },
+            { id: "g-012", date: "2026-03-05", title: "Slay the Spire 2", developer: "Mega Crit", publisher: "Mega Crit", consoles: ["PC", "Steam Deck"], genre: "Roguelike Deckbuilder" },
+            { id: "g-013", date: "2026-03-05", title: "Planet of Lana II: Children of the Leaf", developer: "Wishfully", publisher: "Thunderful Publishing", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S", "Nintendo Switch", "Nintendo Switch 2"], genre: "Cinematic Puzzle Adventure" },
+            { id: "g-014", date: "2026-03-05", title: "Marathon", developer: "Bungie", publisher: "Sony Interactive Entertainment", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Extraction Shooter" },
+            { id: "g-015", date: "2026-03-12", title: "Solasta II", developer: "Tactical Adventures", publisher: "Tactical Adventures", consoles: ["PC", "Steam Deck"], genre: "Tactical CRPG" },
+            { id: "g-016", date: "2026-03-12", title: "John Carpenter's Toxic Commando", developer: "Saber Interactive", publisher: "Focus Entertainment", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Co-op FPS" },
+            { id: "g-017", date: "2026-04-02", title: "Darwin's Paradox", developer: "ZeDrimeTim", publisher: "Konami", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "Platform / Stealth Adventure" },
+            { id: "g-018", date: "2026-04-14", title: "Replaced", developer: "Sad Cat Studios", publisher: "Coatsink / Thunderful", consoles: ["PC", "Steam Deck", "Xbox Series X|S"], genre: "Sci-Fi Action Platformer" },
+            { id: "g-019", date: "2026-04-16", title: "Cthulhu: The Cosmic Abyss", developer: "Big Bad Wolf", publisher: "Nacon", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Cosmic Horror Detective" },
+            { id: "g-020", date: "2026-04-16", title: "Mouse: P.I. For Hire", developer: "Fumi Games", publisher: "PlaySide Publishing", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S", "Nintendo Switch", "Nintendo Switch 2"], genre: "Noir FPS" },
+            { id: "g-021", date: "2026-04-16", title: "Tomodachi Life: Living the Dream", developer: "Nintendo EPD", publisher: "Nintendo", consoles: ["Nintendo Switch", "Nintendo Switch 2"], genre: "Life Sim" },
+            { id: "g-022", date: "2026-04-17", title: "Pragmata", developer: "Capcom", publisher: "Capcom", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "Sci-Fi Action Adventure" },
+            { id: "g-023", date: "2026-04-28", title: "Diablo IV: Lord of Hatred", developer: "Blizzard Entertainment", publisher: "Blizzard Entertainment", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S"], genre: "Action RPG" },
+            { id: "g-024", date: "2026-04-28", title: "Aphelion", developer: "DON'T NOD", publisher: "DON'T NOD", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Sci-Fi Narrative Adventure" },
+            { id: "g-025", date: "2026-04-30", title: "Saros", developer: "Housemarque", publisher: "Sony Interactive Entertainment", consoles: ["PS5"], genre: "Roguelike Action" },
+            { id: "g-026", date: "2026-05-12", title: "Directive 8020", developer: "Supermassive Games", publisher: "Supermassive Games", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Sci-Fi Survival Horror" },
+            { id: "g-027", date: "2026-05-14", title: "Subnautica 2", developer: "Unknown Worlds Entertainment", publisher: "Krafton", consoles: ["PC", "Steam Deck", "Xbox Series X|S"], genre: "Survival Adventure" },
+            { id: "g-028", date: "2026-05-19", title: "Forza Horizon 6", developer: "Playground Games", publisher: "Xbox Game Studios", consoles: ["PC", "Xbox Series X|S"], genre: "Open World Racing" },
+            { id: "g-029", date: "2026-05-27", title: "007 First Light", developer: "IO Interactive", publisher: "IO Interactive", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Espionage Action" },
+            { id: "g-030", date: "2026-06-03", title: "Final Fantasy VII Rebirth", developer: "Square Enix", publisher: "Square Enix", consoles: ["Nintendo Switch 2", "Xbox Series X|S"], genre: "Action RPG" },
+            { id: "g-031", date: "2026-06-05", title: "Gothic 1 Remake", developer: "Alkimia Interactive", publisher: "THQ Nordic", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Dark Fantasy RPG" },
+            { id: "g-032", date: "2026-06-11", title: "Starseeker: Astroneer Expeditions", developer: "System Era Softworks", publisher: "Devolver Digital", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "Space Exploration" },
+            { id: "g-033", date: "2026-07-02", title: "Rhythm Heaven Groove", developer: "Nintendo EPD", publisher: "Nintendo", consoles: ["Nintendo Switch", "Nintendo Switch 2"], genre: "Rhythm Game" },
+            { id: "g-034", date: "2026-07-07", title: "Moonlight Peaks", developer: "Little Chicken Game Company", publisher: "Little Chicken", consoles: ["PC", "Steam Deck", "Nintendo Switch", "Nintendo Switch 2"], genre: "Vampire Life Sim" },
+            { id: "g-035", date: "2026-07-09", title: "Assassin's Creed Black Flag Resynced", developer: "Ubisoft Montreal", publisher: "Ubisoft", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Action Adventure Open World" },
+            { id: "g-036", date: "2026-08-04", title: "Kynseed", developer: "PixelCount Studios", publisher: "PixelCount Studios", consoles: ["PC", "Steam Deck", "Nintendo Switch"], genre: "Generational Life Sim RPG" },
+            { id: "g-037", date: "2026-08-04", title: "Beast of Reincarnation", developer: "Game Freak", publisher: "Private Division / Fictions", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Action Adventure" },
+            { id: "g-038", date: "2026-08-18", title: "The Sinking City 2", developer: "Frogwares", publisher: "Frogwares", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Lovecraftian Survival Horror" },
+            { id: "g-039", date: "2026-08-20", title: "Mortal Shell II", developer: "Cold Symmetry", publisher: "Playstack", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Soulslike Action RPG" },
+            { id: "g-040", date: "2026-08-25", title: "Expeditions: Samurai", developer: "Campfire Cabal", publisher: "THQ Nordic", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S"], genre: "Tactical RPG Storico" },
+            { id: "g-041", date: "2026-09-03", title: "The Blood of Dawnwalker", developer: "Rebel Wolves", publisher: "Bandai Namco Entertainment", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Dark Fantasy Action RPG" },
+            { id: "g-042", date: "2026-09-04", title: "Onimusha: Way of the Sword", developer: "Capcom", publisher: "Capcom", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "Samurai Action" },
+            { id: "g-043", date: "2026-09-15", title: "Marvel's Wolverine", developer: "Insomniac Games", publisher: "Sony Interactive Entertainment", consoles: ["PS5"], genre: "Action Adventure" },
+            { id: "g-044", date: "2026-09-18", title: "Orbitals", developer: "Shapefarm", publisher: "Kepler Interactive", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "Co-op Sci-Fi Adventure (Durata: ~7 ore)" },
+            { id: "g-045", date: "2026-09-24", title: "Silent Hill: Townfall", developer: "No Code", publisher: "Konami / Annapurna Interactive", consoles: ["PC", "PS5"], genre: "Psychological Horror" },
+            { id: "g-046", date: "2026-09-24", title: "Control Resonant", developer: "Remedy Entertainment", publisher: "Remedy Entertainment", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Supernatural Action" },
+            { id: "g-047", date: "2026-10-01", title: "Dynasty Warriors 3: Complete Edition Remastered", developer: "Omega Force", publisher: "Koei Tecmo", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch", "Nintendo Switch 2"], genre: "Musou Action" },
+            { id: "g-048", date: "2026-10-02", title: "Ace Combat 8: Wings of Theve", developer: "Bandai Namco Aces", publisher: "Bandai Namco Entertainment", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Combat Flight Action" },
+            { id: "g-049", date: "2026-10-06", title: "Gears of War: E-Day", developer: "The Coalition / People Can Fly", publisher: "Xbox Game Studios", consoles: ["PC", "Xbox Series X|S"], genre: "Third-Person Shooter" },
+            { id: "g-050", date: "2026-10-06", title: "Star Wars: Galactic Racer", developer: "Fuse Games", publisher: "Electronic Arts", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Arcade Sci-Fi Racing" },
+            { id: "g-051", date: "2026-10-08", title: "Clive Barker's Hellraiser: Revival", developer: "Boss Team Games", publisher: "Saber Interactive", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "Horror Action" },
+            { id: "g-052", date: "2026-10-08", title: "Silver Pines", developer: "Wych Elm", publisher: "Team17", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S", "Nintendo Switch"], genre: "Survival Horror Metroidvania" },
+            { id: "g-053", date: "2026-10-09", title: "Dragon's Dogma 2: Dark Arisen", developer: "Capcom", publisher: "Capcom", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "Action RPG Expansion" },
+            { id: "g-054", date: "2026-10-13", title: "Planet Zoo 2", developer: "Frontier Developments", publisher: "Frontier Developments", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Management Simulation" },
+            { id: "g-055", date: "2026-10-13", title: "Valor Mortis", developer: "One More Level", publisher: "Lyrical Games", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "First-Person Soulslike" },
+            { id: "g-056", date: "2026-10-14", title: "Warhammer 40,000: Boltgun 2", developer: "Auroch Digital", publisher: "Focus Entertainment", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "Boomer Shooter FPS" },
+            { id: "g-057", date: "2026-10-14", title: "The Witch's Bakery", developer: "Sunny Lab", publisher: "Silver Lining Interactive", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S", "Nintendo Switch", "Nintendo Switch 2"], genre: "Cozy Adventure RPG" },
+            { id: "g-058", date: "2026-10-14", title: "Over the Hill", developer: "Funselektor Labs", publisher: "Funselektor Labs", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "Off-Road Exploration" },
+            { id: "g-059", date: "2026-10-15", title: "Castlevania: Belmont's Curse", developer: "Konami Digital Entertainment", publisher: "Konami", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S", "Nintendo Switch"], genre: "Action Metroidvania" },
+            { id: "g-060", date: "2026-10-15", title: "Enshrouded (1.0 Full Release)", developer: "Keen Games", publisher: "Keen Games", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S"], genre: "Survival Action RPG" },
+            { id: "g-061", date: "2026-10-15", title: "Tormented Souls II", developer: "Dual Effect", publisher: "PQube", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Classic Survival Horror" },
+            { id: "g-062", date: "2026-10-16", title: "Tales of Eternia Remastered", developer: "Bandai Namco Studios", publisher: "Bandai Namco Entertainment", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch", "Nintendo Switch 2"], genre: "JRPG" },
+            { id: "g-063", date: "2026-10-16", title: "Tenebris Somnia", developer: "Andrés Borghi & Saibot Studios", publisher: "New Blood Interactive", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S", "Nintendo Switch", "Nintendo Switch 2"], genre: "Retro Survival Horror" },
+            { id: "g-064", date: "2026-10-20", title: "We Were Here Tomorrow", developer: "Total Mayhem Games", publisher: "Total Mayhem Games", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Co-op Puzzle Adventure" },
+            { id: "g-065", date: "2026-10-22", title: "Final Fantasy Resonance", developer: "Square Enix", publisher: "Square Enix", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch", "Nintendo Switch 2"], genre: "JRPG" },
+            { id: "g-066", date: "2026-10-22", title: "Nintendo Switch Sports Resort", developer: "Nintendo EPD", publisher: "Nintendo", consoles: ["Nintendo Switch 2"], genre: "Sport Party" },
+            { id: "g-067", date: "2026-10-23", title: "Call of Duty: Modern Warfare 4", developer: "Infinity Ward", publisher: "Activision", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "First-Person Shooter" },
+            { id: "g-068", date: "2026-10-27", title: "The Séance of Blake Manor", developer: "Spooky Doorway", publisher: "Raw Fury", consoles: ["PC", "Steam Deck"], genre: "Supernatural Detective Mystery" },
+            { id: "g-069", date: "2026-10-27", title: "Remothered: Red Nun's Legacy", developer: "Stormind Games", publisher: "Darril Arts", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "Survival Horror" },
+            { id: "g-070", date: "2026-10-29", title: "Phantom Blade Zero", developer: "S-GAME", publisher: "S-GAME", consoles: ["PC", "PS5"], genre: "Wuxia Action Hack & Slash" },
+            { id: "g-071", date: "2026-10-29", title: "Steins;Gate Re:Boot", developer: "MAGES.", publisher: "Spike Chunsoft", consoles: ["PC", "PS5", "Nintendo Switch", "Nintendo Switch 2"], genre: "Sci-Fi Visual Novel" },
+            { id: "g-072", date: "2026-11-04", title: "Edge of Memories", developer: "Midgar Studio", publisher: "Nacon", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Action JRPG" },
+            { id: "g-073", date: "2026-11-05", title: "The Legend of Zelda: Ocarina of Time (Switch 2)", developer: "Nintendo EPD / Grezzo", publisher: "Nintendo", consoles: ["Nintendo Switch 2"], genre: "Action Adventure" },
+            { id: "g-074", date: "2026-11-11", title: "Shadow of the Road", developer: "Another Angle Games", publisher: "Owlcat Games", consoles: ["PC", "Steam Deck"], genre: "Feudal Steampunk Turn-Based RPG" },
+            { id: "g-075", date: "2026-11-19", title: "Grand Theft Auto VI", developer: "Rockstar Games", publisher: "Take-Two Interactive", consoles: ["PS5", "Xbox Series X|S"], genre: "Open World Action-Adventure" },
+            { id: "g-076", date: "2026-11-30", title: "Hela: Of Mice & Magic", developer: "Windup Games", publisher: "Knights Peak", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "Co-op Adventure" },
+            { id: "g-077", date: "2026-12-03", title: "Warhammer 40,000: Dawn of War IV", developer: "Relic Entertainment", publisher: "SEGA", consoles: ["PC"], genre: "Real-Time Strategy" },
+            { id: "g-078", date: "2026-12-06", title: "Rayman Legends Retold", developer: "Ubisoft Montpellier", publisher: "Ubisoft", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "2D Platformer" },
+            { id: "g-079", date: "2026-12-10", title: "Professor Layton and the New World of Steam", developer: "Level-5", publisher: "Level-5", consoles: ["Nintendo Switch", "Nintendo Switch 2"], genre: "Puzzle Mystery Adventure" },
+            { id: "g-080", date: "2026-12-30", title: "Witchbrook", developer: "Chucklefish", publisher: "Chucklefish", consoles: ["PC", "Steam Deck", "Nintendo Switch", "Nintendo Switch 2", "Xbox Series X|S"], genre: "Magical School Life Sim" },
+            { id: "g-081", date: "2026-12-30", title: "The Duskbloods", developer: "FromSoftware", publisher: "FromSoftware / Nintendo", consoles: ["Nintendo Switch 2"], genre: "Dark Fantasy Multiplayer Action" },
+            { id: "g-082", date: "2027-01-15", title: "Stranger Than Heaven", developer: "Ryu Ga Gotoku Studio", publisher: "SEGA", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Action Adventure" },
+            { id: "g-083", date: "2027-01-27", title: "Tropico 7", developer: "Gaming Minds Studios", publisher: "Kalypso Media", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "City Builder / Dictator Sim" },
+            { id: "g-084", date: "2027-02-03", title: "Metro 2039", developer: "4A Games", publisher: "Plaion / Deep Silver", consoles: ["PC", "PS5", "Xbox Series X|S"], genre: "Post-Apocalyptic FPS" },
+            { id: "g-085", date: "2027-02-12", title: "Tomb Raider: Legacy of Atlantis", developer: "Crystal Dynamics", publisher: "Amazon Games", consoles: ["PC", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "Action Adventure" },
+            { id: "g-086", date: "2027-02-18", title: "Persona 4 Revival", developer: "Atlus (P-Studio)", publisher: "SEGA", consoles: ["PC", "Steam Deck", "PS5", "Xbox Series X|S", "Nintendo Switch 2"], genre: "JRPG" },
+            { id: "g-087", date: "2027-02-23", title: "Fable", developer: "Playground Games", publisher: "Xbox Game Studios", consoles: ["PC", "Xbox Series X|S", "PS5"], genre: "Fantasy Action RPG" }
+        ];
+
+        // STATO DELL'APPLICAZIONE
+        const state = {
+            mainView: 'month', // 'day' | 'month' | 'year' | 'collection'
+            selectedDate: TODAY_ISO, // '2026-10-14'
+            selectedYear: 2026,
+            selectedMonth: 9, // 0-indexed: 9 = Ottobre
+            monthDisplayMode: 'split', // 'split' | 'calendar' | 'cards'
+            monthFilterDay: null, // null or 'YYYY-MM-DD'
+            collectionTab: 'all', // 'all' | 'interested' | 'owned' | 'played'
+            searchQuery: '',
+            consoleFilter: 'ALL',
+            statusFilter: 'all', // 'all' | 'interested' | 'owned' | 'played' | 'untracked'
+            games: [...INITIAL_GAMES_DB],
+            // Tracker state mapped by game.id: { interested: bool, owned: bool, played: bool, rating: '', chosenPlatform: '', notes: '' }
+            userTracker: {},
+            formSelectedConsoles: new Set(),
+            lastAiDiscoveredGames: []
+        };
+
+        window.state = state;
+
+        // ===================================================================
+        // FIREBASE CLOUD STORAGE SETUP (Seguendo rigorosamente RULES 1, 2, 3)
+        // ===================================================================
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'chronoplay-studio-radar';
+
+        async function initCloudSync() {
+            try {
+                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                    const firebaseConfig = JSON.parse(__firebase_config);
+                    const app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+
+                    // RULE 3: Auth Before Queries
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+
+                    onAuthStateChanged(auth, (user) => {
+                        currentUser = user;
+                        if (user) {
+                            const uidEl = document.getElementById('footerUserId');
+                            if (uidEl) uidEl.textContent = `ID Sessione: ${user.uid}`;
+                            setupFirestoreListeners(user.uid);
+                        }
+                    });
+                } else {
+                    setSyncStatusUI('Memoria Locale Pronta (Backup JSON Attivo)', 'amber');
+                }
+            } catch (err) {
+                console.warn("Cloud init fallback:", err);
+                setSyncStatusUI('Sessione Attiva (Backup JSON)', 'amber');
+            }
+        }
+
+        function setupFirestoreListeners(userId) {
+            if (!currentUser || !db) return;
+
+            // RULE 1: Strict Paths (/artifacts/{appId}/users/{userId}/{collectionName})
+            const trackerDocRef = doc(db, 'artifacts', appId, 'users', userId, 'chronoplay_data', 'user_state');
+
+            onSnapshot(
+                trackerDocRef,
+                (snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.data();
+                        if (data.userTrackerJson) {
+                            try {
+                                state.userTracker = JSON.parse(data.userTrackerJson);
+                            } catch (e) {}
+                        }
+                        if (data.customGamesJson) {
+                            try {
+                                const savedGames = JSON.parse(data.customGamesJson);
+                                mergeSavedGames(savedGames);
+                            } catch (e) {}
+                        }
+                        renderAll();
+                        setSyncStatusUI('Cloud Sincronizzato', 'emerald');
+                    } else {
+                        // First time save
+                        persistStateToCloud();
+                    }
+                },
+                (err) => {
+                    console.warn("Errore lettura snapshot:", err);
+                    setSyncStatusUI('Modalità Diretta', 'amber');
+                }
+            );
+        }
+
+        function mergeSavedGames(savedGamesArray) {
+            if (!Array.isArray(savedGamesArray)) return;
+            const map = new Map();
+            INITIAL_GAMES_DB.forEach(g => map.set(g.id, g));
+            savedGamesArray.forEach(g => {
+                if (g && g.id) {
+                    if (g._deleted) {
+                        map.delete(g.id);
+                    } else {
+                        map.set(g.id, g);
+                    }
+                }
+            });
+            state.games = Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
+        }
+
+        async function persistStateToCloud() {
+            if (!currentUser || !db) return;
+            try {
+                setSyncStatusUI('Salvataggio...', 'cyan');
+                const trackerDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'chronoplay_data', 'user_state');
+                await setDoc(trackerDocRef, {
+                    userTrackerJson: JSON.stringify(state.userTracker),
+                    customGamesJson: JSON.stringify(state.games),
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+                setSyncStatusUI('Cloud Sincronizzato', 'emerald');
+            } catch (err) {
+                console.warn("Errore salvataggio cloud:", err);
+            }
+        }
+
+        function setSyncStatusUI(text, color = 'emerald') {
+            const badge = document.getElementById('syncStatusBadge');
+            if (!badge) return;
+            const colorMap = {
+                emerald: 'text-emerald-400',
+                amber: 'text-amber-400',
+                cyan: 'text-cyan-400'
+            };
+            badge.className = `inline-flex items-center gap-1 font-mono text-[11px] ${colorMap[color] || 'text-emerald-400'}`;
+            badge.innerHTML = `<i class="fa-solid fa-cloud-bolt"></i> ${text}`;
+        }
+
+        // ===================================================================
+        // HELPER DATE & FORMATTAZIONE ITALIANA
+        // ===================================================================
+        function parseIsoDate(isoStr) {
+            const [y, m, d] = isoStr.split('-').map(Number);
+            return new Date(y, m - 1, d);
+        }
+
+        function formatFullItalianDate(isoStr) {
+            const dt = parseIsoDate(isoStr);
+            const dayName = ITALIAN_DAYS_FULL[dt.getDay()];
+            const dayNum = dt.getDate();
+            const monthName = ITALIAN_MONTHS[dt.getMonth()];
+            const yearNum = dt.getFullYear();
+            return `${dayName} ${dayNum} ${monthName} ${yearNum}`;
+        }
+
+        function formatShortItalianDate(isoStr) {
+            const [y, m, d] = isoStr.split('-').map(Number);
+            return `${String(d).padStart(2, '0')} ${ITALIAN_MONTHS_SHORT[m - 1]} ${y}`;
+        }
+
+        function diffDaysFromToday(isoStr, referenceIso = TODAY_ISO) {
+            const d1 = parseIsoDate(referenceIso);
+            const d2 = parseIsoDate(isoStr);
+            const diffTime = d2.getTime() - d1.getTime();
+            return Math.round(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        function getReleaseCountdownBadge(isoStr) {
+            const diff = diffDaysFromToday(isoStr, TODAY_ISO);
+            if (diff === 0) {
+                return `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-amber-500 text-slate-950 animate-pulse-subtle">🔥 USCITO OGGI</span>`;
+            } else if (diff === 1) {
+                return `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">⏳ DOMANI</span>`;
+            } else if (diff > 1 && diff <= 14) {
+                return `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">⏳ TRA ${diff} GIORNI</span>`;
+            } else if (diff > 14) {
+                return `<span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">Tra ${diff} gg</span>`;
+            } else if (diff === -1) {
+                return `<span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Uscito ieri</span>`;
+            } else {
+                return `<span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-400/90 border border-emerald-500/20">✅ Disponibile</span>`;
+            }
+        }
+
+        function getConsoleBadgeClass(plat) {
+            const p = plat.toLowerCase();
+            if (p.includes('switch 2')) return 'badge-switch2';
+            if (p.includes('switch')) return 'badge-switch';
+            if (p.includes('ps5') || p.includes('playstation')) return 'badge-ps5';
+            if (p.includes('xbox')) return 'badge-xbox';
+            if (p.includes('deck')) return 'badge-deck';
+            return 'badge-pc';
+        }
+
+        function getConsoleIcon(plat) {
+            const p = plat.toLowerCase();
+            if (p.includes('ps5')) return 'fa-brands fa-playstation';
+            if (p.includes('xbox')) return 'fa-brands fa-xbox';
+            if (p.includes('deck')) return 'fa-brands fa-steam';
+            if (p.includes('pc')) return 'fa-solid fa-desktop';
+            return 'fa-solid fa-gamepad';
+        }
+
+        function getGameStatus(gameId) {
+            return state.userTracker[gameId] || {
+                interested: false,
+                owned: false,
+                played: false,
+                rating: '',
+                chosenPlatform: '',
+                notes: ''
+            };
+        }
+
+        // ===================================================================
+        // INTERAZIONI UTENTE: SPUNTE INTERESSATO / POSSIEDO / GIOCATO
+        // ===================================================================
+        window.toggleUserStatus = function(gameId, field, event) {
+            if (event) event.stopPropagation();
+            const current = getGameStatus(gameId);
+            const updated = {
+                ...current,
+                [field]: !current[field]
+            };
+            state.userTracker[gameId] = updated;
+
+            const game = state.games.find(g => g.id === gameId);
+            const labelMap = {
+                interested: '⭐ Interessato',
+                owned: '📦 Possiedo',
+                played: '🏆 Giocato'
+            };
+
+            if (updated[field]) {
+                showToast(`${game ? game.title : 'Gioco'} aggiunto a ${labelMap[field]}`, 'emerald');
+            } else {
+                showToast(`Rimosso da ${labelMap[field]}`, 'slate');
+            }
+
+            renderAll();
+            persistStateToCloud();
+        };
+
+        // ===================================================================
+        // FILTRI GLOBALI E RICERCA
+        // ===================================================================
+        function matchesGlobalFilters(game) {
+            // Search Query
+            if (state.searchQuery.trim() !== '') {
+                const q = state.searchQuery.toLowerCase().trim();
+                const matchTitle = game.title.toLowerCase().includes(q);
+                const matchDev = (game.developer || '').toLowerCase().includes(q);
+                const matchPub = (game.publisher || '').toLowerCase().includes(q);
+                const matchGenre = (game.genre || '').toLowerCase().includes(q);
+                const matchPlat = (game.consoles || []).some(c => c.toLowerCase().includes(q));
+                if (!matchTitle && !matchDev && !matchPub && !matchGenre && !matchPlat) {
+                    return false;
+                }
+            }
+
+            // Console Filter
+            if (state.consoleFilter !== 'ALL') {
+                if (!(game.consoles || []).includes(state.consoleFilter)) {
+                    return false;
+                }
+            }
+
+            // User Status Filter
+            const st = getGameStatus(game.id);
+            if (state.statusFilter === 'interested' && !st.interested) return false;
+            if (state.statusFilter === 'owned' && !st.owned) return false;
+            if (state.statusFilter === 'played' && !st.played) return false;
+            if (state.statusFilter === 'untracked' && (st.interested || st.owned || st.played)) return false;
+
+            return true;
+        }
+
+        window.handleSearchAndFilter = function() {
+            const input = document.getElementById('globalSearchInput');
+            state.searchQuery = input ? input.value : '';
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (clearBtn) {
+                clearBtn.classList.toggle('hidden', state.searchQuery.trim() === '');
+            }
+            renderAll();
+        };
+
+        window.clearSearch = function() {
+            const input = document.getElementById('globalSearchInput');
+            if (input) input.value = '';
+            state.searchQuery = '';
+            document.getElementById('clearSearchBtn')?.classList.add('hidden');
+            renderAll();
+        };
+
+        window.QuickSearchByTerm = function(term) {
+            const input = document.getElementById('globalSearchInput');
+            if (input) input.value = term;
+            state.searchQuery = term;
+            document.getElementById('clearSearchBtn')?.classList.remove('hidden');
+            renderAll();
+            showToast(`Filtro applicato: "${term}"`, 'cyan');
+        };
+
+        window.setConsoleFilter = function(consoleName) {
+            state.consoleFilter = consoleName;
+            renderAll();
+        };
+
+        window.setStatusFilter = function(statusKey) {
+            state.statusFilter = statusKey;
+            renderAll();
+        };
+
+        window.filterByUserStatus = function(statusKey) {
+            state.mainView = 'collection';
+            state.collectionTab = statusKey;
+            renderAll();
+        };
+
+        window.resetAllFilters = function() {
+            state.searchQuery = '';
+            state.consoleFilter = 'ALL';
+            state.statusFilter = 'all';
+            state.monthFilterDay = null;
+            const input = document.getElementById('globalSearchInput');
+            if (input) input.value = '';
+            document.getElementById('clearSearchBtn')?.classList.add('hidden');
+            renderAll();
+            showToast('Tutti i filtri sono stati azzerati', 'cyan');
+        };
+
+        // ===================================================================
+        // RENDERING CARD VIDEOGIOCO COMPLETA (EDITORIAL STUDIO CARD)
+        // ===================================================================
+        function renderGameCardHTML(game) {
+            const st = getGameStatus(game.id);
+            const isToday = game.date === TODAY_ISO;
+
+            const consolesHtml = (game.consoles || []).map(c => `
+                <button onclick="setConsoleFilter('${c.replace(/'/g, "\\'")}')" class="px-2 py-0.5 rounded-md text-[11px] font-medium flex items-center gap-1 transition-transform hover:scale-105 ${getConsoleBadgeClass(c)}">
+                    <i class="${getConsoleIcon(c)} text-[10px]"></i>
+                    <span>${c}</span>
+                </button>
+            `).join('');
+
+            const hasNotesOrRating = (st.rating && st.rating !== '') || (st.notes && st.notes.trim() !== '') || (st.chosenPlatform && st.chosenPlatform !== '');
+
+            return `
+                <article class="glass-panel rounded-2xl p-4 sm:p-5 flex flex-col justify-between card-glow border ${isToday ? 'border-amber-500/60 bg-amber-500/[0.03]' : 'border-slate-800/90'}">
+                    <div>
+                        <!-- Top Meta Row: Date & Countdown Badge -->
+                        <div class="flex items-center justify-between gap-2 mb-2.5">
+                            <button onclick="openDayFromCard('${game.date}')" class="inline-flex items-center gap-1.5 text-xs font-mono text-slate-300 hover:text-amber-400 transition-colors">
+                                <i class="fa-regular fa-calendar text-amber-400"></i>
+                                <span>${formatShortItalianDate(game.date)}</span>
+                            </button>
+                            <div class="flex items-center gap-1.5">
+                                ${getReleaseCountdownBadge(game.date)}
+                                <button onclick="openGameModal('${game.id}')" class="w-7 h-7 rounded-lg bg-studio-950 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 flex items-center justify-center text-xs transition-colors" title="Modifica scheda gioco">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Game Title & Genre -->
+                        <div class="mb-3">
+                            <h4 class="font-display font-bold text-base sm:text-lg text-white leading-snug hover:text-amber-300 transition-colors">
+                                ${game.title}
+                            </h4>
+                            ${game.genre ? `<span class="inline-block mt-1 text-[11px] font-mono text-amber-400/90 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">${game.genre}</span>` : ''}
+                        </div>
+
+                        <!-- Developer & Publisher Box -->
+                        <div class="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-studio-950/90 border border-slate-800/90 mb-3 text-xs">
+                            <div class="overflow-hidden">
+                                <div class="text-[10px] font-mono uppercase text-slate-500 flex items-center gap-1">
+                                    <i class="fa-solid fa-code text-amber-400"></i> Sviluppatore
+                                </div>
+                                <button onclick="QuickSearchByTerm('${(game.developer || '').replace(/'/g, "\\'")}')" class="font-semibold text-slate-200 hover:text-amber-300 truncate block w-full text-left mt-0.5" title="Filtra per ${game.developer}">
+                                    ${game.developer || 'N/D'}
+                                </button>
+                            </div>
+                            <div class="overflow-hidden border-l border-slate-800 pl-2.5">
+                                <div class="text-[10px] font-mono uppercase text-slate-500 flex items-center gap-1">
+                                    <i class="fa-solid fa-building text-cyan-400"></i> Editore (Publisher)
+                                </div>
+                                <button onclick="QuickSearchByTerm('${(game.publisher || '').replace(/'/g, "\\'")}')" class="font-semibold text-slate-200 hover:text-cyan-300 truncate block w-full text-left mt-0.5" title="Filtra per ${game.publisher}">
+                                    ${game.publisher || 'N/D'}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Console Badges -->
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            ${consolesHtml}
+                        </div>
+
+                        <!-- Personal Critic Box (if populated) -->
+                        ${hasNotesOrRating ? `
+                            <div onclick="openCriticModal('${game.id}')" class="mb-3 p-2.5 rounded-xl bg-emerald-950/25 border border-emerald-500/30 text-xs cursor-pointer hover:border-emerald-400/50 transition-all">
+                                <div class="flex items-center justify-between text-[11px] font-mono text-emerald-300 mb-1">
+                                    <span><i class="fa-solid fa-feather-pointed mr-1"></i>Appunti Critico</span>
+                                    <div class="flex items-center gap-2">
+                                        ${st.chosenPlatform ? `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-200">${st.chosenPlatform}</span>` : ''}
+                                        ${st.rating ? `<span class="px-1.5 py-0.5 rounded bg-amber-500 text-slate-950 font-bold">★ ${st.rating}/10</span>` : ''}
+                                    </div>
+                                </div>
+                                ${st.notes ? `<p class="text-slate-300 text-xs line-clamp-2 italic">"${st.notes}"</p>` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- Interactive 3 Status Checkboxes + Critic Note Button -->
+                    <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-1.5">
+                        <div class="grid grid-cols-3 gap-1.5 flex-1">
+                            <button
+                                onclick="toggleUserStatus('${game.id}', 'interested', event)"
+                                class="btn-status-interested ${st.interested ? 'active' : 'bg-studio-950 text-slate-400 border-slate-800 hover:border-amber-500/40 hover:text-slate-200'} px-2 py-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1 transition-all"
+                                title="Segna come Interessato (Wishlist)"
+                            >
+                                <span>⭐</span>
+                                <span class="truncate">Interessato</span>
+                            </button>
+
+                            <button
+                                onclick="toggleUserStatus('${game.id}', 'owned', event)"
+                                class="btn-status-owned ${st.owned ? 'active' : 'bg-studio-950 text-slate-400 border-slate-800 hover:border-cyan-500/40 hover:text-slate-200'} px-2 py-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1 transition-all"
+                                title="Segna come Posseduto in Collezione"
+                            >
+                                <span>📦</span>
+                                <span class="truncate">Possiedo</span>
+                            </button>
+
+                            <button
+                                onclick="toggleUserStatus('${game.id}', 'played', event)"
+                                class="btn-status-played ${st.played ? 'active' : 'bg-studio-950 text-slate-400 border-slate-800 hover:border-emerald-500/40 hover:text-slate-200'} px-2 py-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1 transition-all"
+                                title="Segna come Giocato / Completato"
+                            >
+                                <span>🏆</span>
+                                <span class="truncate">Giocato</span>
+                            </button>
+                        </div>
+
+                        <button
+                            onclick="openCriticModal('${game.id}')"
+                            class="w-9 h-9 rounded-xl border ${hasNotesOrRating ? 'bg-amber-500/20 border-amber-500/50 text-amber-300' : 'bg-studio-950 border-slate-800 text-slate-400 hover:text-white'} flex items-center justify-center text-xs transition-all shrink-0"
+                            title="Voto personale, piattaforma scelta e note recensione"
+                        >
+                            <i class="fa-solid fa-star-half-stroke"></i>
+                        </button>
+                    </div>
+                </article>
+            `;
+        }
+
+        // ===================================================================
+        // NAVIGAZIONE VISTE PRINCIPALI
+        // ===================================================================
+        window.switchMainView = function(viewName) {
+            state.mainView = viewName;
+            renderAll();
+        };
+
+        window.openDayFromCard = function(isoDate) {
+            state.selectedDate = isoDate;
+            state.mainView = 'day';
+            const picker = document.getElementById('dayPickerInput');
+            if (picker) picker.value = isoDate;
+            renderAll();
+        };
+
+        window.jumpToToday = function() {
+            state.selectedDate = TODAY_ISO;
+            state.selectedYear = 2026;
+            state.selectedMonth = 9; // Ottobre
+            state.mainView = 'day';
+            const picker = document.getElementById('dayPickerInput');
+            if (picker) picker.value = TODAY_ISO;
+            renderAll();
+        };
+
+        window.shiftSelectedDay = function(deltaDays) {
+            const dt = parseIsoDate(state.selectedDate);
+            dt.setDate(dt.getDate() + deltaDays);
+            const y = dt.getFullYear();
+            const m = String(dt.getMonth() + 1).padStart(2, '0');
+            const d = String(dt.getDate()).padStart(2, '0');
+            state.selectedDate = `${y}-${m}-${d}`;
+            const picker = document.getElementById('dayPickerInput');
+            if (picker) picker.value = state.selectedDate;
+            renderAll();
+        };
+
+        window.onDatePickerChange = function(val) {
+            if (!val) return;
+            state.selectedDate = val;
+            renderAll();
+        };
+
+        window.setYear = function(yearNum) {
+            state.selectedYear = Number(yearNum);
+            state.monthFilterDay = null;
+            renderAll();
+        };
+
+        window.setMonth = function(monthIndex) {
+            state.selectedMonth = Number(monthIndex);
+            state.monthFilterDay = null;
+            if (state.mainView !== 'month') {
+                state.mainView = 'month';
+            }
+            renderAll();
+        };
+
+        window.setMonthDisplayMode = function(mode) {
+            state.monthDisplayMode = mode;
+            renderAll();
+        };
+
+        window.selectCalendarDayInMonth = function(isoDate) {
+            if (state.monthFilterDay === isoDate) {
+                state.monthFilterDay = null;
+            } else {
+                state.monthFilterDay = isoDate;
+                if (state.monthDisplayMode === 'calendar') {
+                    state.monthDisplayMode = 'split';
+                }
+            }
+            renderAll();
+        };
+
+        window.clearMonthDayFilter = function() {
+            state.monthFilterDay = null;
+            renderAll();
+        };
+
+        window.setCollectionTab = function(tabKey) {
+            state.collectionTab = tabKey;
+            renderAll();
+        };
+
+        // ===================================================================
+        // RENDERING GENERALE (KPI, NAV, VISTE)
+        // ===================================================================
+        function renderAll() {
+            updateKpiBar();
+            updateNavigationStyles();
+            updateFilterPillsStyles();
+
+            // Toggle visibility of the 4 main views
+            document.getElementById('view-day')?.classList.toggle('hidden', state.mainView !== 'day');
+            document.getElementById('view-month')?.classList.toggle('hidden', state.mainView !== 'month');
+            document.getElementById('view-year')?.classList.toggle('hidden', state.mainView !== 'year');
+            document.getElementById('view-collection')?.classList.toggle('hidden', state.mainView !== 'collection');
+
+            if (state.mainView === 'day') renderDayView();
+            if (state.mainView === 'month') renderMonthView();
+            if (state.mainView === 'year') renderYearView();
+            if (state.mainView === 'collection') renderCollectionView();
+        }
+
+        function updateKpiBar() {
+            const total = state.games.length;
+            const todayCount = state.games.filter(g => g.date === TODAY_ISO).length;
+
+            const monthPrefix = `${state.selectedYear}-${String(state.selectedMonth + 1).padStart(2, '0')}`;
+            const monthCount = state.games.filter(g => g.date.startsWith(monthPrefix)).length;
+
+            let interestedCount = 0;
+            let ownedCount = 0;
+            let playedCount = 0;
+            let totalTracked = 0;
+
+            state.games.forEach(g => {
+                const st = getGameStatus(g.id);
+                if (st.interested) interestedCount++;
+                if (st.owned) ownedCount++;
+                if (st.played) playedCount++;
+                if (st.interested || st.owned || st.played) totalTracked++;
+            });
+
+            document.getElementById('kpiTotalGames').textContent = total;
+            document.getElementById('kpiTodayGames').textContent = todayCount;
+            document.getElementById('kpiMonthLabel').textContent = `Uscite ${ITALIAN_MONTHS_SHORT[state.selectedMonth]} ${state.selectedYear}`;
+            document.getElementById('kpiMonthGames').textContent = monthCount;
+            document.getElementById('kpiInterested').textContent = interestedCount;
+            document.getElementById('kpiOwned').textContent = ownedCount;
+            document.getElementById('kpiPlayed').textContent = playedCount;
+
+            document.getElementById('navBadgeToday').textContent = todayCount;
+            document.getElementById('navBadgeTracked').textContent = totalTracked;
+        }
+
+        function updateNavigationStyles() {
+            const views = ['day', 'month', 'year', 'collection'];
+            views.forEach(v => {
+                const btn = document.getElementById(`nav-${v}`);
+                if (!btn) return;
+                if (state.mainView === v) {
+                    btn.className = "nav-tab flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 whitespace-nowrap bg-studio-800 text-white border border-amber-500/40 shadow-md";
+                } else {
+                    btn.className = "nav-tab flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 whitespace-nowrap text-slate-400 hover:text-white hover:bg-studio-900";
+                }
+            });
+        }
+
+        function updateFilterPillsStyles() {
+            // Status pills
+            const statuses = ['all', 'interested', 'owned', 'played', 'untracked'];
+            statuses.forEach(s => {
+                const btn = document.getElementById(`status-filter-${s}`);
+                if (!btn) return;
+                if (state.statusFilter === s) {
+                    btn.className = "status-pill px-3 py-1.5 rounded-xl text-xs font-bold border border-amber-500 bg-amber-500/20 text-amber-300 transition-all whitespace-nowrap";
+                } else {
+                    btn.className = "status-pill px-3 py-1.5 rounded-xl text-xs font-medium border border-slate-800 bg-studio-950 text-slate-400 hover:text-slate-200 transition-all whitespace-nowrap";
+                }
+            });
+
+            // Console pills
+            document.querySelectorAll('#consoleFilterBar .console-pill').forEach(btn => {
+                const plat = btn.getAttribute('data-console');
+                if (plat === state.consoleFilter) {
+                    btn.className = "console-pill px-3 py-1 rounded-lg text-xs font-bold border border-cyan-400 bg-cyan-500/20 text-cyan-200 transition-all whitespace-nowrap";
+                } else {
+                    btn.className = "console-pill px-3 py-1 rounded-lg text-xs font-medium border border-slate-800 bg-studio-950 text-slate-400 hover:text-slate-200 transition-all whitespace-nowrap";
+                }
+            });
+        }
+
+        // ===================================================================
+        // RENDER 1: VISTA GIORNO (RADAR GIORNALIERO)
+        // ===================================================================
+        function renderDayView() {
+            const fullTitleEl = document.getElementById('dayViewFullTitle');
+            const relBadgeEl = document.getElementById('dayViewRelativeBadge');
+            if (fullTitleEl) fullTitleEl.textContent = formatFullItalianDate(state.selectedDate);
+
+            const diff = diffDaysFromToday(state.selectedDate, TODAY_ISO);
+            if (relBadgeEl) {
+                if (diff === 0) {
+                    relBadgeEl.textContent = "OGGI (14 OTTOBRE 2026)";
+                    relBadgeEl.className = "px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-amber-500 text-slate-950 font-bold";
+                } else if (diff === 1) {
+                    relBadgeEl.textContent = "DOMANI";
+                    relBadgeEl.className = "px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30";
+                } else if (diff > 1) {
+                    relBadgeEl.textContent = `TRA ${diff} GIORNI`;
+                    relBadgeEl.className = "px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-indigo-500/20 text-indigo-300 border border-indigo-500/30";
+                } else {
+                    relBadgeEl.textContent = `${Math.abs(diff)} GIORNI FA`;
+                    relBadgeEl.className = "px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-slate-800 text-slate-300";
+                }
+            }
+
+            // 1. Giochi del giorno selezionato
+            const exactGames = state.games.filter(g => g.date === state.selectedDate && matchesGlobalFilters(g));
+            document.getElementById('dayExactCountBadge').textContent = exactGames.length;
+            const exactGrid = document.getElementById('dayExactGrid');
+            if (exactGames.length === 0) {
+                exactGrid.innerHTML = `
+                    <div class="col-span-full glass-panel rounded-2xl p-8 text-center border border-dashed border-slate-800">
+                        <i class="fa-regular fa-calendar-xmark text-2xl text-slate-500 mb-2"></i>
+                        <p class="text-sm text-slate-300 font-medium">Nessun videogioco registrato per ${formatFullItalianDate(state.selectedDate)} con i filtri attuali.</p>
+                        <button onclick="openGameModalWithDate('${state.selectedDate}')" class="mt-3 px-4 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-xs font-semibold">
+                            <i class="fa-solid fa-plus mr-1"></i>Aggiungi un gioco in questa data
+                        </button>
+                    </div>
+                `;
+            } else {
+                exactGrid.innerHTML = exactGames.map(renderGameCardHTML).join('');
+            }
+
+            // 2. Prossimi 7 giorni dal giorno selezionato
+            const upcomingGames = state.games.filter(g => {
+                const d = diffDaysFromToday(g.date, state.selectedDate);
+                return d >= 1 && d <= 7 && matchesGlobalFilters(g);
+            }).sort((a, b) => a.date.localeCompare(b.date));
+
+            document.getElementById('dayUpcomingCountBadge').textContent = upcomingGames.length;
+            const upcomingGrid = document.getElementById('dayUpcomingGrid');
+            if (upcomingGames.length === 0) {
+                upcomingGrid.innerHTML = `<div class="col-span-full text-xs text-slate-500 italic py-4">Nessuna uscita programmata nei 7 giorni successivi.</div>`;
+            } else {
+                upcomingGrid.innerHTML = upcomingGames.map(renderGameCardHTML).join('');
+            }
+
+            // 3. Ultimi 7 giorni dal giorno selezionato
+            const recentGames = state.games.filter(g => {
+                const d = diffDaysFromToday(g.date, state.selectedDate);
+                return d >= -7 && d <= -1 && matchesGlobalFilters(g);
+            }).sort((a, b) => b.date.localeCompare(a.date));
+
+            document.getElementById('dayRecentCountBadge').textContent = recentGames.length;
+            const recentGrid = document.getElementById('dayRecentGrid');
+            if (recentGames.length === 0) {
+                recentGrid.innerHTML = `<div class="col-span-full text-xs text-slate-500 italic py-4">Nessuna uscita nei 7 giorni precedenti.</div>`;
+            } else {
+                recentGrid.innerHTML = recentGames.map(renderGameCardHTML).join('');
+            }
+        }
+
+        // ===================================================================
+        // RENDER 2: VISTA MESE (GRIGLIA CALENDARIO + ELENCO CARD)
+        // ===================================================================
+        function renderMonthView() {
+            // Year Switcher Buttons
+            [2026, 2027].forEach(yr => {
+                const btn = document.getElementById(`year-btn-${yr}`);
+                if (!btn) return;
+                if (state.selectedYear === yr) {
+                    btn.className = "px-3.5 py-1.5 rounded-lg font-mono text-xs font-bold bg-amber-500 text-slate-950 shadow";
+                } else {
+                    btn.className = "px-3.5 py-1.5 rounded-lg font-mono text-xs font-bold text-slate-400 hover:text-white";
+                }
+            });
+
+            // Display Mode Buttons
+            ['split', 'calendar', 'cards'].forEach(m => {
+                const btn = document.getElementById(`month-mode-${m}`);
+                if (!btn) return;
+                if (state.monthDisplayMode === m) {
+                    btn.className = "px-3 py-1.5 rounded-lg font-semibold bg-studio-800 text-amber-300 border border-amber-500/30 flex items-center gap-1.5";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white flex items-center gap-1.5";
+                }
+            });
+
+            // Render 12 Month Pills
+            const pillsContainer = document.getElementById('monthPillsContainer');
+            pillsContainer.innerHTML = ITALIAN_MONTHS.map((mName, idx) => {
+                const prefix = `${state.selectedYear}-${String(idx + 1).padStart(2, '0')}`;
+                const count = state.games.filter(g => g.date.startsWith(prefix) && matchesGlobalFilters(g)).length;
+                const isSelected = state.selectedMonth === idx;
+                const isCurrentRealMonth = (state.selectedYear === 2026 && idx === 9);
+
+                return `
+                    <button
+                        onclick="setMonth(${idx})"
+                        class="p-2 rounded-xl border text-left transition-all flex flex-col justify-between ${
+                            isSelected
+                                ? 'bg-amber-500/20 border-amber-500 text-white shadow-lg shadow-amber-500/10'
+                                : 'bg-studio-950/90 border-slate-800/90 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                        }"
+                    >
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-xs font-display font-bold ${isSelected ? 'text-amber-300' : ''}">${ITALIAN_MONTHS_SHORT[idx]}</span>
+                            ${isCurrentRealMonth ? '<span class="w-1.5 h-1.5 rounded-full bg-amber-400" title="Mese Corrente"></span>' : ''}
+                        </div>
+                        <div class="mt-1 flex items-baseline justify-between w-full">
+                            <span class="font-mono text-xs font-bold ${count > 0 ? 'text-white' : 'text-slate-600'}">${count}</span>
+                            <span class="text-[10px] text-slate-500">uscite</span>
+                        </div>
+                    </button>
+                `;
+            }).join('');
+
+            const monthTitle = `${ITALIAN_MONTHS[state.selectedMonth]} ${state.selectedYear}`;
+            document.getElementById('monthViewTitle').textContent = monthTitle;
+
+            // Show/Hide Calendar and Cards sections based on displayMode
+            const calWrapper = document.getElementById('monthCalendarWrapper');
+            const cardsWrapper = document.getElementById('monthCardsWrapper');
+            calWrapper.classList.toggle('hidden', state.monthDisplayMode === 'cards');
+            cardsWrapper.classList.toggle('hidden', state.monthDisplayMode === 'calendar');
+
+            // Render 7-column Calendar Grid
+            renderMonthlyCalendarCells();
+
+            // Render Detailed Month Cards
+            const monthPrefix = `${state.selectedYear}-${String(state.selectedMonth + 1).padStart(2, '0')}`;
+            let monthGames = state.games.filter(g => g.date.startsWith(monthPrefix) && matchesGlobalFilters(g))
+                .sort((a, b) => a.date.localeCompare(b.date));
+
+            const filterBanner = document.getElementById('monthDayFilterBanner');
+            if (state.monthFilterDay) {
+                monthGames = monthGames.filter(g => g.date === state.monthFilterDay);
+                filterBanner.classList.remove('hidden');
+                filterBanner.classList.add('flex');
+                document.getElementById('monthDayFilterText').textContent = `Giorno: ${formatShortItalianDate(state.monthFilterDay)}`;
+                document.getElementById('monthCardsHeaderTitle').textContent = `Uscite del ${formatFullItalianDate(state.monthFilterDay)}`;
+            } else {
+                filterBanner.classList.add('hidden');
+                filterBanner.classList.remove('flex');
+                document.getElementById('monthCardsHeaderTitle').textContent = `Tutte le Uscite di ${monthTitle}`;
+            }
+
+            document.getElementById('monthCardsCountBadge').textContent = monthGames.length;
+            const cardsGrid = document.getElementById('monthCardsGrid');
+
+            if (monthGames.length === 0) {
+                cardsGrid.innerHTML = `
+                    <div class="col-span-full glass-panel rounded-2xl p-8 text-center border border-dashed border-slate-800">
+                        <p class="text-sm text-slate-300">Nessun videogioco trovato per questo periodo con i filtri selezionati.</p>
+                        <button onclick="openGameModalWithDate('${monthPrefix}-15')" class="mt-3 px-4 py-2 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">
+                            + Aggiungi uscita in ${monthTitle}
+                        </button>
+                    </div>
+                `;
+            } else {
+                cardsGrid.innerHTML = monthGames.map(renderGameCardHTML).join('');
+            }
+        }
+
+        function renderMonthlyCalendarCells() {
+            const year = state.selectedYear;
+            const month = state.selectedMonth;
+            const firstDayOfMonth = new Date(year, month, 1);
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Convert Sunday=0..Saturday=6 to Monday=0..Sunday=6
+            const startOffset = (firstDayOfMonth.getDay() + 6) % 7;
+
+            let html = '';
+
+            // Empty leading cells
+            for (let i = 0; i < startOffset; i++) {
+                html += `<div class="min-h-[95px] sm:min-h-[120px] rounded-xl bg-studio-950/35 border border-slate-900/60"></div>`;
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isoDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayGames = state.games.filter(g => g.date === isoDate && matchesGlobalFilters(g));
+                const isToday = isoDate === TODAY_ISO;
+                const isSelectedFilter = state.monthFilterDay === isoDate;
+
+                const badgesHtml = dayGames.slice(0, 3).map(g => {
+                    const st = getGameStatus(g.id);
+                    let dotColor = 'bg-slate-400';
+                    if (st.played) dotColor = 'bg-emerald-400';
+                    else if (st.owned) dotColor = 'bg-cyan-400';
+                    else if (st.interested) dotColor = 'bg-amber-400';
+
+                    return `
+                        <div class="px-1.5 py-0.5 rounded bg-studio-900/95 border border-slate-700/80 text-[10px] text-slate-200 truncate flex items-center gap-1" title="${g.title} (${g.developer})">
+                            <span class="w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}"></span>
+                            <span class="truncate">${g.title}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                const moreCount = dayGames.length > 3 ? `<div class="text-[10px] font-mono text-amber-400 pl-1">+ altri ${dayGames.length - 3} giochi</div>` : '';
+
+                html += `
+                    <div
+                        onclick="selectCalendarDayInMonth('${isoDate}')"
+                        class="min-h-[95px] sm:min-h-[120px] p-2 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
+                            isSelectedFilter
+                                ? 'bg-amber-500/15 border-amber-400 shadow-lg shadow-amber-500/10'
+                                : isToday
+                                    ? 'bg-amber-500/10 border-amber-500/60'
+                                    : dayGames.length > 0
+                                        ? 'bg-studio-950/90 border-slate-800 hover:border-slate-600'
+                                        : 'bg-studio-950/40 border-slate-900 hover:border-slate-800'
+                        }"
+                    >
+                        <div class="flex items-center justify-between">
+                            <span class="font-mono text-xs font-bold ${isToday ? 'px-1.5 py-0.5 rounded bg-amber-500 text-slate-950' : dayGames.length > 0 ? 'text-white' : 'text-slate-600'}">
+                                ${day}
+                            </span>
+                            ${dayGames.length > 0 ? `<span class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-800 text-amber-300">${dayGames.length}</span>` : ''}
+                        </div>
+                        <div class="space-y-1 mt-1.5 overflow-hidden">
+                            ${badgesHtml}
+                            ${moreCount}
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('calendarGridCells').innerHTML = html;
+        }
+
+        // ===================================================================
+        // RENDER 3: VISTA ANNO (ROADMAP 12 MESI & BREAKDOWN PIATTAFORME)
+        // ===================================================================
+        function renderYearView() {
+            const year = state.selectedYear;
+            document.getElementById('yearViewTitle').textContent = `Roadmap Videoludica ${year}`;
+
+            [2026, 2027].forEach(yr => {
+                const btn = document.getElementById(`year-roadmap-${yr}`);
+                if (!btn) return;
+                if (yr === year) {
+                    btn.className = "px-4 py-2 rounded-xl font-mono text-xs font-bold bg-amber-500 text-slate-950 border border-amber-400 shadow";
+                } else {
+                    btn.className = "px-4 py-2 rounded-xl font-mono text-xs font-bold bg-studio-950 text-slate-400 border border-slate-800 hover:text-white";
+                }
+            });
+
+            const yearGames = state.games.filter(g => g.date.startsWith(`${year}-`) && matchesGlobalFilters(g));
+
+            // Console Breakdown for selected year
+            const platforms = ['PC', 'Steam Deck', 'PS5', 'Xbox Series X|S', 'Nintendo Switch', 'Nintendo Switch 2'];
+            const breakdownEl = document.getElementById('yearConsoleBreakdown');
+            breakdownEl.innerHTML = platforms.map(plat => {
+                const count = yearGames.filter(g => (g.consoles || []).includes(plat)).length;
+                return `
+                    <div onclick="setConsoleFilter('${plat.replace(/'/g, "\\'")}')" class="glass-panel rounded-xl p-3 border border-slate-800/90 hover:border-slate-600 cursor-pointer transition-all flex items-center justify-between">
+                        <div>
+                            <div class="text-[11px] text-slate-400 font-medium">${plat}</div>
+                            <div class="font-display font-bold text-lg text-white mt-0.5">${count} <span class="text-[11px] font-normal text-slate-500">titoli</span></div>
+                        </div>
+                        <i class="${getConsoleIcon(plat)} text-lg text-slate-500"></i>
+                    </div>
+                `;
+            }).join('');
+
+            // 12 Months Cards
+            const monthsGrid = document.getElementById('yearMonthsGrid');
+            monthsGrid.innerHTML = ITALIAN_MONTHS.map((mName, idx) => {
+                const prefix = `${year}-${String(idx + 1).padStart(2, '0')}`;
+                const mGames = yearGames.filter(g => g.date.startsWith(prefix)).sort((a, b) => a.date.localeCompare(b.date));
+                const isOct2026 = (year === 2026 && idx === 9);
+
+                const previewItems = mGames.slice(0, 5).map(g => {
+                    const st = getGameStatus(g.id);
+                    const statusIcon = st.played ? '🏆' : st.owned ? '📦' : st.interested ? '⭐' : '';
+                    return `
+                        <div onclick="openDayFromCard('${g.date}')" class="flex items-center justify-between gap-2 py-1.5 px-2 rounded-lg hover:bg-studio-850 cursor-pointer text-xs border-b border-slate-800/40 last:border-0">
+                            <div class="truncate flex items-center gap-2">
+                                <span class="font-mono text-[11px] text-amber-400">${g.date.slice(8, 10)}/${g.date.slice(5, 7)}</span>
+                                <span class="text-slate-200 font-medium truncate">${g.title}</span>
+                            </div>
+                            <span class="text-[11px] shrink-0">${statusIcon}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="glass-panel rounded-2xl p-4 border ${isOct2026 ? 'border-amber-500/50' : 'border-slate-800/90'} flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-3 mb-2 border-b border-slate-800">
+                                <div>
+                                    <h3 class="font-display font-bold text-base text-white flex items-center gap-2">
+                                        <span>${mName} ${year}</span>
+                                        ${isOct2026 ? '<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500 text-slate-950 font-bold">MESE CORRENTE</span>' : ''}
+                                    </h3>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-mono font-bold ${mGames.length > 0 ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30' : 'bg-slate-900 text-slate-600'}">
+                                    ${mGames.length} uscite
+                                </span>
+                            </div>
+
+                            <div class="space-y-0.5 min-h-[150px]">
+                                ${mGames.length > 0 ? previewItems : '<p class="text-xs text-slate-600 italic py-10 text-center">Nessuna uscita registrata</p>'}
+                            </div>
+                        </div>
+
+                        <div class="pt-3 mt-2 border-t border-slate-800/80 flex items-center justify-between">
+                            <span class="text-[11px] text-slate-400 font-mono">
+                                ${mGames.length > 5 ? `+ altri ${mGames.length - 5} titoli nel mese` : 'Tutti i titoli visibili'}
+                            </span>
+                            <button onclick="setMonth(${idx})" class="px-3 py-1.5 rounded-xl bg-studio-850 hover:bg-amber-500 hover:text-slate-950 text-amber-300 text-xs font-semibold transition-all">
+                                Apri Calendario Mese →
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===================================================================
+        // RENDER 4: LA MIA LIBRERIA & TRACKER (INTERESSATO / POSSIEDO / GIOCATO)
+        // ===================================================================
+        function renderCollectionView() {
+            const tabs = ['all', 'interested', 'owned', 'played'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`col-tab-${t}`);
+                if (!btn) return;
+                if (state.collectionTab === t) {
+                    btn.className = "px-3.5 py-2 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 shadow";
+                } else {
+                    btn.className = "px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white";
+                }
+            });
+
+            const trackedGames = state.games.filter(g => {
+                const st = getGameStatus(g.id);
+                const anyTracked = st.interested || st.owned || st.played;
+                if (!anyTracked) return false;
+                if (state.collectionTab === 'interested' && !st.interested) return false;
+                if (state.collectionTab === 'owned' && !st.owned) return false;
+                if (state.collectionTab === 'played' && !st.played) return false;
+                return matchesGlobalFilters(g);
+            }).sort((a, b) => a.date.localeCompare(b.date));
+
+            const grid = document.getElementById('collectionCardsGrid');
+            if (trackedGames.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full glass-panel rounded-2xl p-10 text-center border border-dashed border-slate-800 space-y-3">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-800/80 text-amber-400 flex items-center justify-center mx-auto text-xl">
+                            <i class="fa-solid fa-bookmark"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-lg text-white">La tua libreria filtrata è vuota</h3>
+                        <p class="text-xs text-slate-400 max-w-md mx-auto">
+                            Spunta i pulsanti <strong>⭐ Interessato</strong>, <strong>📦 Possiedo</strong> o <strong>🏆 Giocato</strong> su qualsiasi scheda videogioco nelle viste Giorno, Mese o Anno per ritrovarli sempre qui.
+                        </p>
+                        <button onclick="switchMainView('month')" class="px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs">
+                            Esplora Uscite del Mese
+                        </button>
+                    </div>
+                `;
+            } else {
+                grid.innerHTML = trackedGames.map(renderGameCardHTML).join('');
+            }
+        }
+
+        // ===================================================================
+        // MODALE AGGIUNTA / MODIFICA GIOCO
+        // ===================================================================
+        window.openGameModal = function(gameId = null) {
+            const modal = document.getElementById('gameModal');
+            const deleteBtn = document.getElementById('deleteGameBtn');
+            state.formSelectedConsoles.clear();
+
+            if (gameId) {
+                const g = state.games.find(x => x.id === gameId);
+                if (!g) return;
+                const st = getGameStatus(g.id);
+                document.getElementById('gameModalTitle').textContent = "Modifica Scheda Videogioco";
+                document.getElementById('formGameId').value = g.id;
+                document.getElementById('formTitle').value = g.title;
+                document.getElementById('formDate').value = g.date;
+                document.getElementById('formDeveloper').value = g.developer || '';
+                document.getElementById('formPublisher').value = g.publisher || '';
+                document.getElementById('formGenre').value = g.genre || '';
+                document.getElementById('formInterested').checked = !!st.interested;
+                document.getElementById('formOwned').checked = !!st.owned;
+                document.getElementById('formPlayed').checked = !!st.played;
+
+                (g.consoles || []).forEach(c => state.formSelectedConsoles.add(c));
+                deleteBtn.classList.remove('hidden');
+            } else {
+                document.getElementById('gameModalTitle').textContent = "Aggiungi Nuovo Videogioco";
+                document.getElementById('formGameId').value = '';
+                document.getElementById('formTitle').value = '';
+                document.getElementById('formDate').value = state.selectedDate || TODAY_ISO;
+                document.getElementById('formDeveloper').value = '';
+                document.getElementById('formPublisher').value = '';
+                document.getElementById('formGenre').value = '';
+                document.getElementById('formInterested').checked = true;
+                document.getElementById('formOwned').checked = false;
+                document.getElementById('formPlayed').checked = false;
+                state.formSelectedConsoles.add('PC');
+                state.formSelectedConsoles.add('PS5');
+                deleteBtn.classList.add('hidden');
+            }
+
+            updateFormConsoleButtonsUI();
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.openGameModalWithDate = function(isoDate) {
+            window.openGameModal(null);
+            document.getElementById('formDate').value = isoDate;
+        };
+
+        window.closeGameModal = function() {
+            const modal = document.getElementById('gameModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        window.toggleFormConsole = function(plat) {
+            if (state.formSelectedConsoles.has(plat)) {
+                state.formSelectedConsoles.delete(plat);
+            } else {
+                state.formSelectedConsoles.add(plat);
+            }
+            updateFormConsoleButtonsUI();
+        };
+
+        function updateFormConsoleButtonsUI() {
+            document.querySelectorAll('#formConsolesContainer .form-console-btn').forEach(btn => {
+                const plat = btn.getAttribute('data-plat');
+                if (state.formSelectedConsoles.has(plat)) {
+                    btn.className = "form-console-btn px-3 py-1.5 rounded-xl text-xs font-bold border border-amber-400 bg-amber-500/20 text-amber-300";
+                } else {
+                    btn.className = "form-console-btn px-3 py-1.5 rounded-xl text-xs font-medium border border-slate-700 bg-studio-950 text-slate-400";
+                }
+            });
+        }
+
+        window.saveGameFromModal = function(e) {
+            e.preventDefault();
+            const existingId = document.getElementById('formGameId').value;
+            const title = document.getElementById('formTitle').value.trim();
+            const date = document.getElementById('formDate').value;
+            const developer = document.getElementById('formDeveloper').value.trim();
+            const publisher = document.getElementById('formPublisher').value.trim();
+            const genre = document.getElementById('formGenre').value.trim();
+
+            const consoles = Array.from(state.formSelectedConsoles);
+            if (consoles.length === 0) consoles.push('PC');
+
+            const id = existingId || `g-custom-${Date.now()}`;
+            const gameObj = { id, title, date, developer, publisher, consoles, genre };
+
+            const idx = state.games.findIndex(g => g.id === id);
+            if (idx >= 0) {
+                state.games[idx] = gameObj;
+            } else {
+                state.games.push(gameObj);
+            }
+            state.games.sort((a, b) => a.date.localeCompare(b.date));
+
+            const currentSt = getGameStatus(id);
+            state.userTracker[id] = {
+                ...currentSt,
+                interested: document.getElementById('formInterested').checked,
+                owned: document.getElementById('formOwned').checked,
+                played: document.getElementById('formPlayed').checked
+            };
+
+            closeGameModal();
+            renderAll();
+            persistStateToCloud();
+            showToast(`"${title}" salvato nel database!`, 'emerald');
+        };
+
+        window.deleteCurrentGame = function() {
+            const id = document.getElementById('formGameId').value;
+            if (!id) return;
+            state.games = state.games.filter(g => g.id !== id);
+            closeGameModal();
+            renderAll();
+            persistStateToCloud();
+            showToast('Videogioco rimosso dal catalogo', 'amber');
+        };
+
+        // ===================================================================
+        // MODALE DIARIO DEL CRITICO (VOTO, PIATTAFORMA, NOTE)
+        // ===================================================================
+        window.openCriticModal = function(gameId) {
+            const game = state.games.find(g => g.id === gameId);
+            if (!game) return;
+            const st = getGameStatus(gameId);
+
+            document.getElementById('criticGameId').value = gameId;
+            document.getElementById('criticModalGameTitle').textContent = game.title;
+            document.getElementById('criticRating').value = st.rating || '';
+            document.getElementById('criticPlatform').value = st.chosenPlatform || '';
+            document.getElementById('criticNotesText').value = st.notes || '';
+
+            const modal = document.getElementById('criticModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.closeCriticModal = function() {
+            const modal = document.getElementById('criticModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        window.saveCriticNotes = function(e) {
+            e.preventDefault();
+            const gameId = document.getElementById('criticGameId').value;
+            if (!gameId) return;
+            const current = getGameStatus(gameId);
+            state.userTracker[gameId] = {
+                ...current,
+                rating: document.getElementById('criticRating').value,
+                chosenPlatform: document.getElementById('criticPlatform').value,
+                notes: document.getElementById('criticNotesText').value.trim()
+            };
+            closeCriticModal();
+            renderAll();
+            persistStateToCloud();
+            showToast('Valutazione e note critiche salvate!', 'emerald');
+        };
+
+        // ===================================================================
+        // MODALE LIVE AI SYNC (GEMINI API + GOOGLE SEARCH GROUNDING)
+        // ===================================================================
+        window.openAiSyncModal = function() {
+            const modal = document.getElementById('aiSyncModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.closeAiSyncModal = function() {
+            const modal = document.getElementById('aiSyncModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        window.setAiPrompt = function(text) {
+            const input = document.getElementById('aiQueryInput');
+            if (input) input.value = text;
+        };
+
+        async function fetchWithRetry(url, options, retries = 3, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const res = await fetch(url, options);
+                    if (res.ok) return await res.json();
+                } catch (e) {}
+                await new Promise(r => setTimeout(r, delay * Math.pow(2, i)));
+            }
+            throw new Error("Impossibile contattare l'assistente AI in questo momento.");
+        }
+
+        window.runGeminiLiveDiscovery = async function() {
+            const input = document.getElementById('aiQueryInput');
+            const query = input ? input.value.trim() : '';
+            if (!query) {
+                showToast('Inserisci una richiesta o il nome di un videogioco', 'amber');
+                return;
+            }
+
+            const loadingBox = document.getElementById('aiLoadingBox');
+            const resultsBox = document.getElementById('aiResultsContainer');
+            loadingBox.classList.remove('hidden');
+            resultsBox.innerHTML = '';
+
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const systemPrompt = `Sei un esperto analista e archivista videoludico internazionale. L'utente vuole aggiornare il proprio database di uscite videogiochi (2026-2027).
+Restituisci ESCLUSIVAMENTE un array JSON valido di oggetti videogioco (massimo 6 titoli pertinenti alla richiesta).
+Ogni oggetto deve avere rigorosamente queste proprietà:
+- "title": stringa (titolo ufficiale)
+- "date": stringa in formato "YYYY-MM-DD" (se il giorno esatto non è noto, usa il 15 del mese previsto o una data realistica 2026/2027)
+- "developer": stringa (studio di sviluppo)
+- "publisher": stringa (editore)
+- "consoles": array di stringhe scelte tra ["PC", "Steam Deck", "PS5", "Xbox Series X|S", "Nintendo Switch", "Nintendo Switch 2"]
+- "genre": stringa in italiano o inglese (es. "Action RPG", "Survival Horror")`;
+
+            const payload = {
+                contents: [{ parts: [{ text: query }] }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "ARRAY",
+                        items: {
+                            type: "OBJECT",
+                            properties: {
+                                title: { type: "STRING" },
+                                date: { type: "STRING" },
+                                developer: { type: "STRING" },
+                                publisher: { type: "STRING" },
+                                consoles: { type: "ARRAY", items: { type: "STRING" } },
+                                genre: { type: "STRING" }
+                            },
+                            required: ["title", "date", "developer", "publisher", "consoles", "genre"]
+                        }
+                    }
+                }
+            };
+
+            try {
+                const result = await fetchWithRetry(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                loadingBox.classList.add('hidden');
+                const rawText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!rawText) throw new Error("Risposta vuota");
+
+                const parsedGames = JSON.parse(rawText);
+                state.lastAiDiscoveredGames = Array.isArray(parsedGames) ? parsedGames : [];
+
+                if (state.lastAiDiscoveredGames.length === 0) {
+                    resultsBox.innerHTML = `<div class="p-4 rounded-xl bg-studio-950 text-xs text-slate-400">Nessun titolo trovato per questa ricerca.</div>`;
+                    return;
+                }
+
+                resultsBox.innerHTML = `
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                        <span class="text-xs font-mono text-emerald-400">Trovate ${state.lastAiDiscoveredGames.length} schede verificate:</span>
+                        <button onclick="importAllAiGames()" class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs">
+                            + Aggiungi Tutti al Catalogo
+                        </button>
+                    </div>
+                    ${state.lastAiDiscoveredGames.map((g, idx) => `
+                        <div class="p-3.5 rounded-xl bg-studio-950 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-mono text-xs text-amber-400">${g.date}</span>
+                                    <h4 class="font-display font-bold text-sm text-white">${g.title}</h4>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    <strong>Dev:</strong> ${g.developer} • <strong>Pub:</strong> ${g.publisher} • <strong>Console:</strong> ${(g.consoles || []).join(', ')}
+                                </p>
+                            </div>
+                            <button onclick="importSingleAiGame(${idx})" class="px-3.5 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500 hover:text-slate-950 text-cyan-300 border border-cyan-500/40 text-xs font-semibold shrink-0 transition-all">
+                                + Importa Scheda
+                            </button>
+                        </div>
+                    `).join('')}
+                `;
+            } catch (err) {
+                loadingBox.classList.add('hidden');
+                resultsBox.innerHTML = `
+                    <div class="p-4 rounded-xl bg-rose-950/30 border border-rose-500/30 text-xs text-rose-300">
+                        Non è stato possibile completare la ricerca automatica in questo istante. Puoi comunque aggiungere qualsiasi gioco manualmente tramite il pulsante "+ Nuovo Gioco".
+                    </div>
+                `;
+            }
+        };
+
+        window.importSingleAiGame = function(idx) {
+            const g = state.lastAiDiscoveredGames[idx];
+            if (!g) return;
+            addOrUpdateDiscoveredGame(g);
+            renderAll();
+            persistStateToCloud();
+            showToast(`"${g.title}" aggiunto al catalogo!`, 'emerald');
+        };
+
+        window.importAllAiGames = function() {
+            state.lastAiDiscoveredGames.forEach(g => addOrUpdateDiscoveredGame(g));
+            renderAll();
+            persistStateToCloud();
+            closeAiSyncModal();
+            showToast(`${state.lastAiDiscoveredGames.length} giochi sincronizzati nel catalogo!`, 'emerald');
+        };
+
+        function addOrUpdateDiscoveredGame(g) {
+            const existing = state.games.find(x => x.title.toLowerCase() === g.title.toLowerCase());
+            if (existing) {
+                existing.date = g.date || existing.date;
+                existing.developer = g.developer || existing.developer;
+                existing.publisher = g.publisher || existing.publisher;
+                existing.consoles = g.consoles || existing.consoles;
+                existing.genre = g.genre || existing.genre;
+            } else {
+                state.games.push({
+                    id: `g-ai-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+                    title: g.title,
+                    date: g.date || TODAY_ISO,
+                    developer: g.developer || 'N/D',
+                    publisher: g.publisher || 'N/D',
+                    consoles: Array.isArray(g.consoles) ? g.consoles : ['PC'],
+                    genre: g.genre || 'Action'
+                });
+            }
+            state.games.sort((a, b) => a.date.localeCompare(b.date));
+        }
+
+        // ===================================================================
+        // BACKUP PORTABILE: ESPORTA / IMPORTA JSON & CSV
+        // ===================================================================
+        window.exportBackupJSON = function() {
+            const backupPayload = {
+                app: "ChronoPlay Studio",
+                exportedAt: new Date().toISOString(),
+                games: state.games,
+                userTracker: state.userTracker
+            };
+            const blob = new Blob([JSON.stringify(backupPayload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `chronoplay-backup-${TODAY_ISO}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Backup JSON esportato con successo!', 'emerald');
+        };
+
+        window.exportBackupCSV = function() {
+            const headers = ['Data Uscita', 'Titolo', 'Sviluppatore', 'Publisher', 'Console', 'Genere', 'Interessato', 'Possiedo', 'Giocato', 'Voto', 'Note'];
+            const rows = state.games.map(g => {
+                const st = getGameStatus(g.id);
+                return [
+                    g.date,
+                    `"${(g.title || '').replace(/"/g, '""')}"`,
+                    `"${(g.developer || '').replace(/"/g, '""')}"`,
+                    `"${(g.publisher || '').replace(/"/g, '""')}"`,
+                    `"${(g.consoles || []).join(', ')}"`,
+                    `"${(g.genre || '').replace(/"/g, '""')}"`,
+                    st.interested ? 'SI' : 'NO',
+                    st.owned ? 'SI' : 'NO',
+                    st.played ? 'SI' : 'NO',
+                    st.rating || '',
+                    `"${(st.notes || '').replace(/"/g, '""')}"`
+                ].join(',');
+            });
+            const csvContent = [headers.join(','), ...rows].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `chronoplay-catalogo-${TODAY_ISO}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Foglio CSV esportato!', 'cyan');
+        };
+
+        window.importBackupJSON = function(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (Array.isArray(data.games)) {
+                        state.games = data.games.sort((a, b) => a.date.localeCompare(b.date));
+                    }
+                    if (data.userTracker && typeof data.userTracker === 'object') {
+                        state.userTracker = data.userTracker;
+                    }
+                    renderAll();
+                    persistStateToCloud();
+                    showToast('Backup JSON importato e ripristinato!', 'emerald');
+                } catch (err) {
+                    showToast('File JSON non valido', 'amber');
+                }
+            };
+            reader.readAsText(file);
+        };
+
+        // ===================================================================
+        // SISTEMA NOTIFICHE TOAST (NO ALERT)
+        // ===================================================================
+        function showToast(message, tone = 'emerald') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            const borderMap = {
+                emerald: 'border-emerald-500/50 text-emerald-200',
+                amber: 'border-amber-500/50 text-amber-200',
+                cyan: 'border-cyan-500/50 text-cyan-200',
+                slate: 'border-slate-700 text-slate-300'
+            };
+            toast.className = `glass-panel px-4 py-2.5 rounded-xl border ${borderMap[tone] || borderMap.emerald} shadow-xl text-xs font-medium flex items-center gap-2 transition-all duration-300`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2600);
+        }
+
+        // Avvio iniziale al caricamento pagina (Posizionato su Ottobre 2026 e 14 Ottobre 2026)
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAll();
+            initCloudSync();
+        });
+    </script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.error));
+}
+</script>
+</body>
+</html>
